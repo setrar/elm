@@ -1,0 +1,25 @@
+<!doctype html>
+<html class="no-js" lang="en-US">
+
+  <head>
+  <title>Multiple Elm App Demo</title>
+  <script src="main.js"></script>
+</head>
+
+<body>
+  <div id="red"></div>
+  <p>Hello world! This is HTML5 Boilerplate.</p>
+  <div id="blue"></div>
+  
+  
+  <script>
+  var red = Elm.Red.init({
+    node: document.getElementById('red')
+  });
+  var blue = Elm.Blue.init({
+    node: document.getElementById('blue')
+  });  
+  </script>
+</body>
+
+</html>
