@@ -4,8 +4,8 @@ import Browser
 import Html exposing (Html, div, h1, h3, img, text, button, input, label)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
-import Array exposing (Array)
 import Random
+import Http
 
 urlPrefix : String
 urlPrefix =
@@ -31,9 +31,10 @@ viewLoaded photos selectedUrl chosenSize =
 
 type Msg 
     = ClickedPhoto String
-    | GotRandomPhoto Photo
     | ClickedSize ThumbnailSize
     | ClickedSurpriseMe
+    | GotRandomPhoto Photo
+    | GotPhotos (Result Http.Error String)
 
 view : Model -> Html Msg
 view model =
@@ -92,14 +93,18 @@ type alias Model =
     , chosenSize : ThumbnailSize
     }
 
--- chosenSize : ThumbnailSize
--- chosenSize = Medium
-
 initialModel : Model
 initialModel =
     { status = Loading
     , chosenSize = Medium
     }
+
+initialCmd : Cmd Msg
+initialCmd =
+    Http.get
+        { url = urlPrefix ++ "/photos/list"
+        , expect = Http.expectString GotPhotos
+        }
 
 selectUrl : String -> Status -> Status
 selectUrl url status =
@@ -141,11 +146,24 @@ update msg model =
                 Errored errorMessage ->
                     ( model, Cmd.none )
 
+        GotPhotos (Ok responseStr) ->
+            case String.split "," responseStr of
+                x :: _ as urls ->
+                    let
+                        photos =List.map Photo urls
+                    in
+                        ( { model | status = Loaded photos x }, Cmd.none )
+                [] ->
+                    ( { model | status = Errored "0 photos found" }, Cmd.none )
+
+        GotPhotos (Err _) ->
+            ( model, Cmd.none )
+
 main : Program () Model Msg
 main = 
     Browser.element
-        { init = \flags -> ( initialModel, Cmd.none )
+        { init = \_ -> ( initialModel, initialCmd )
         , view = view
         , update = update
-        , subscriptions = \model -> Sub.none
+        , subscriptions = \_ -> Sub.none
         }
