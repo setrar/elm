@@ -14,6 +14,8 @@ $ elm init
 
 ## :b: Prepare the project
 
+:bulb: The application source code is called `PhotoGroove`
+
 :round_pushpin: Create the `index.html` file
 
 ```html
@@ -32,7 +34,7 @@ $ elm init
 </html>
 ```
 
-:round_pushpin: Add few libraries
+:round_pushpin: Add required libraries
 
 - [ ] Add the [`Random`](https://package.elm-lang.org/packages/elm/random/latest/) library
 
