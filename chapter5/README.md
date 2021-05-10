@@ -21,7 +21,7 @@ $ elm reactor
 $ elm make src/PhotoGroove.elm --output elm.js
 ```
 
-- [ ] Create the `html` file
+- [ ] Create the `index.html` file
 
 ```html
 <!doctype html>
