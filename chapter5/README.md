@@ -11,11 +11,6 @@ https://www.manning.com/books/elm-in-action
 $ elm init
 ```
 
-- [ ] Run the project
-
-```
-$ elm reactor
-```
 
 ## :b: Prepare the project
 
@@ -70,6 +65,11 @@ $ echo Y | elm install NoRedInk/elm-json-decode-pipeline
 $ elm make src/PhotoGroove.elm --output elm.js
 ```
 
+## :ab: Run the project
+
+```
+$ elm reactor
+```
 
 test on:
 
