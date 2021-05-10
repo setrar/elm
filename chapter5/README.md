@@ -3,7 +3,9 @@
 https://www.manning.com/books/elm-in-action
 
 
-- [ ] Create an `elm` project
+## :a: Create the project
+
+- [ ] Initialize an `elm` project
 
 ```
 $ elm init
@@ -15,13 +17,9 @@ $ elm init
 $ elm reactor
 ```
 
-- [ ] Compile the project
+## :b: Prepare the project
 
-```
-$ elm make src/PhotoGroove.elm --output elm.js
-```
-
-- [ ] Create the `index.html` file
+:round_pushpin: Create the `index.html` file
 
 ```html
 <!doctype html>
@@ -39,9 +37,7 @@ $ elm make src/PhotoGroove.elm --output elm.js
 </html>
 ```
 
-test on:
-
-http://localhost:8000
+:round_pushpin: Add few libraries
 
 - [ ] Add the [`Random`](https://package.elm-lang.org/packages/elm/random/latest/) library
 
@@ -67,3 +63,15 @@ $ echo Y | elm install elm/json
 ```
 $ echo Y | elm install NoRedInk/elm-json-decode-pipeline
 ```
+
+:round_pushpin:  Compile the project
+
+```
+$ elm make src/PhotoGroove.elm --output elm.js
+```
+
+
+test on:
+
+http://localhost:8000
+
