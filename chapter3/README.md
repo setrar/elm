@@ -3,28 +3,30 @@
 https://www.manning.com/books/elm-in-action
 
 
+- [ ] Create an `elm` project
+
 ```
 $ elm init
 ```
 
+- [ ] Run the project
 
 ```
 $ elm reactor
 ```
 
-:round_pushpin:
-
-Generate HTML files
+- [ ] Compile the project
 
 ```
 $ elm make src/PhotoGroove.elm --output elm.js
-```
-
-```
-$ python3 -m http.server
 ```
 
 test on:
 
 http://localhost:8000
 
+- [ ] Add the [`Random`](https://package.elm-lang.org/packages/elm/random/latest/) library
+
+```
+$ echo Y | elm install elm/random
+```

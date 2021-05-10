@@ -3,25 +3,22 @@
 https://www.manning.com/books/elm-in-action
 
 
+- [ ] Create an `elm` project
+
 ```
 $ elm init
 ```
 
+- [ ] Run the project
 
 ```
 $ elm reactor
 ```
 
-:round_pushpin:
-
-Generate HTML files
+- [ ] Compile the project
 
 ```
 $ elm make src/PhotoGroove.elm --output elm.js
-```
-
-```
-$ python3 -m http.server
 ```
 
 test on:
