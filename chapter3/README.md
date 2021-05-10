@@ -21,6 +21,24 @@ $ elm reactor
 $ elm make src/PhotoGroove.elm --output elm.js
 ```
 
+- [ ] Create the `html` file
+
+```html
+<!doctype html>
+<html>
+    <head>
+        <link rel="stylesheet" href="http://elm-in-action.com/styles.css">
+    </head>
+    <body>
+        <div id="app"></div>
+        <script src="elm.js"></script>
+        <script>
+            Elm.PhotoGroove.init({node: document.getElementById("app")});
+        </script>
+    </body>
+</html>
+```
+
 test on:
 
 http://localhost:8000
