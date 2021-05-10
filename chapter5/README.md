@@ -18,14 +18,24 @@ $ elm init
 
 :round_pushpin: Create the `index.html` file
 
+[WICG/webcomponents](https://github.com/WICG/webcomponents)
+
 ```html
-<!doctype html>
 <html>
     <head>
         <link rel="stylesheet" href="http://elm-in-action.com/styles.css">
     </head>
     <body>
         <div id="app"></div>
+        <script>
+            class RangeSlider extends HTMLElement {
+                connectedCallBack() {
+                    var input = document.createElement("input");
+                    this.appendChild(input);
+                } 
+            }
+            window.customElements.define("range-slider", RangeSlider);
+        </script>
         <script src="elm.js"></script>
         <script>
             Elm.PhotoGroove.init({node: document.getElementById("app")});
