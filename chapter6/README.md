@@ -11,7 +11,7 @@ https://www.manning.com/books/elm-in-action
 $ elm init
 ```
 
-[:<: Chapter5](../chapter5) Follow Chapter 5 Installation
+[ :round_pushpin: Chapter5](../chapter5) Follow Chapter 5 Installation
 
 
 ## :b: Prepare the test project
