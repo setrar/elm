@@ -4693,6 +4693,9 @@ var $elm$core$Set$toList = function (_v0) {
 	return $elm$core$Dict$keys(dict);
 };
 var $elm$core$Basics$GT = {$: 'GT'};
+var $author$project$PhotoGroove$GotActivity = function (a) {
+	return {$: 'GotActivity', a: a};
+};
 var $elm$core$Result$Err = function (a) {
 	return {$: 'Err', a: a};
 };
@@ -5088,6 +5091,8 @@ var $elm$core$Result$isOk = function (result) {
 		return false;
 	}
 };
+var $elm$json$Json$Decode$string = _Json_decodeString;
+var $author$project$PhotoGroove$activityChanges = _Platform_incomingPort('activityChanges', $elm$json$Json$Decode$string);
 var $elm$json$Json$Decode$map = _Json_map1;
 var $elm$json$Json$Decode$map2 = _Json_map2;
 var $elm$json$Json$Decode$succeed = _Json_succeed;
@@ -6256,7 +6261,6 @@ var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required = F3(
 			A2($elm$json$Json$Decode$field, key, valDecoder),
 			decoder);
 	});
-var $elm$json$Json$Decode$string = _Json_decodeString;
 var $author$project$PhotoGroove$photoDecoder = A4(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
 	'title',
@@ -6282,9 +6286,7 @@ var $author$project$PhotoGroove$initialCmd = $elm$http$Http$get(
 	});
 var $author$project$PhotoGroove$Loading = {$: 'Loading'};
 var $author$project$PhotoGroove$Medium = {$: 'Medium'};
-var $author$project$PhotoGroove$initialModel = {chosenSize: $author$project$PhotoGroove$Medium, hue: 5, noise: 5, ripple: 5, status: $author$project$PhotoGroove$Loading};
-var $elm$core$Platform$Sub$batch = _Platform_batch;
-var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
+var $author$project$PhotoGroove$initialModel = {activity: '', chosenSize: $author$project$PhotoGroove$Medium, hue: 5, noise: 5, ripple: 5, status: $author$project$PhotoGroove$Loading};
 var $author$project$PhotoGroove$Errored = function (a) {
 	return {$: 'Errored', a: a};
 };
@@ -6590,6 +6592,13 @@ var $elm$random$Random$uniform = F2(
 var $author$project$PhotoGroove$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
+			case 'GotActivity':
+				var activity = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{activity: activity}),
+					$elm$core$Platform$Cmd$none);
 			case 'GotRandomPhoto':
 				var photo = msg.a;
 				return $author$project$PhotoGroove$applyFilters(
@@ -6934,6 +6943,16 @@ var $author$project$PhotoGroove$viewLoaded = F3(
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
+						$elm$html$Html$Attributes$class('activity')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(model.activity)
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
 						$elm$html$Html$Attributes$class('filters')
 					]),
 				_List_fromArray(
@@ -7013,7 +7032,7 @@ var $author$project$PhotoGroove$main = $elm$browser$Browser$element(
 			return _Utils_Tuple2($author$project$PhotoGroove$initialModel, $author$project$PhotoGroove$initialCmd);
 		},
 		subscriptions: function (_v1) {
-			return $elm$core$Platform$Sub$none;
+			return $author$project$PhotoGroove$activityChanges($author$project$PhotoGroove$GotActivity);
 		},
 		update: $author$project$PhotoGroove$update,
 		view: $author$project$PhotoGroove$view
