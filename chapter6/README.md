@@ -35,14 +35,10 @@ $ npx elm-test init
 $ elm make src/PhotoGroove.elm --output app.js
 ```
 
-## :ab: Run the project
+## :ab: Run the test
 
 ```
-$ elm reactor
+$ npx elm-test
 ```
-
-test on:
-
-http://localhost:8000
 
 
