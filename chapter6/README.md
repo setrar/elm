@@ -27,4 +27,20 @@ $ npm install --save-dev elm-test
 $ npx elm-test init
 ```
 
+:round_pushpin:  Compile the project
+
+```
+$ elm make src/PhotoGroove.elm --output app.js
+```
+
+## :ab: Run the project
+
+```
+$ elm reactor
+```
+
+test on:
+
+http://localhost:8000
+
 
