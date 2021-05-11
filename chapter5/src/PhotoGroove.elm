@@ -1,7 +1,7 @@
-module PhotoGroove exposing (main)
+port module PhotoGroove exposing (main)
 
 import Browser
-import Html exposing (Attribute, Html, button, div, h1, h3, img, input, label, node, text)
+import Html exposing (Attribute, Html, button, div, h1, h3, img, input, label, node, text, canvas)
 import Html.Attributes as Attr exposing (class, classList, id, name, src, title, type_)
 import Html.Events exposing (on, onClick)
 import Random
@@ -66,11 +66,7 @@ viewLoaded photos selectedUrl model =
             (List.map viewSizeChooser [ Small, Medium, Large ])
         , div [ id "thumbnails", class (sizeToString model.chosenSize) ]
             (List.map (viewThumbnail selectedUrl) photos)
-        , img
-            [ class "large"
-            , src (urlPrefix ++ "large/" ++ selectedUrl)
-            ]
-            []
+        , canvas [ id "main-canvas", class "large"] []
         ]
 
 viewThumbnail : String -> Photo -> Html Msg
@@ -106,6 +102,13 @@ type ThumbnailSize
     = Small
     | Medium
     | Large
+
+port setFilters : FilterOptions -> Cmd msg
+
+type alias FilterOptions =
+    { url : String
+    , filters : List { name : String, amount : Float }
+    }
 
 type alias Photo =
     { url : String
@@ -146,10 +149,10 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         GotRandomPhoto photo ->
-            ( { model | status = selectUrl photo.url model.status}, Cmd.none )
+            applyFilters { model | status = selectUrl photo.url model.status }
 
         ClickedPhoto url ->
-            ( { model | status = selectUrl url model.status}, Cmd.none )
+            applyFilters { model | status = selectUrl url model.status }
 
         ClickedSize size ->
             ( { model | chosenSize = size }, Cmd.none )
@@ -173,7 +176,16 @@ update msg model =
         GotPhotos (Ok photos) ->
             case photos of
                 x :: _ ->
-                    ( { model | status = Loaded photos x.url }, Cmd.none )
+                    applyFilters
+                    { model
+                        | status =
+                            case List.head photos of
+                                Just photo ->
+                                    Loaded photos x.url
+
+                                Nothing ->
+                                    Loaded [] ""
+                    }
                 [] ->
                     ( { model | status = Errored "0 photos found" }, Cmd.none )
 
@@ -181,13 +193,34 @@ update msg model =
             ( { model | status = Errored "Server error!" }, Cmd.none )
 
         SlidHue hue ->
-            ( { model | hue = hue }, Cmd.none )
+            applyFilters { model | hue = hue }
 
         SlidRipple ripple ->
-            ( { model | ripple = ripple }, Cmd.none )
+            applyFilters { model | ripple = ripple }
 
         SlidNoise noise ->
-            ( { model | noise = noise }, Cmd.none)
+            applyFilters { model | noise = noise }
+
+applyFilters : Model -> ( Model, Cmd Msg)
+applyFilters model =
+    case model.status of
+        Loaded photos selectedUrl ->
+            let
+                filters =
+                    [ { name = "Hue", amount = toFloat model.hue / 11 }
+                    , { name = "Ripple", amount = toFloat model.ripple / 11 }
+                    , { name = "Noise", amount = toFloat model.noise / 11 }
+                    ]
+                url =
+                    urlPrefix ++ "large/" ++ selectedUrl
+            in
+            ( model, setFilters { url = url, filters = filters } )
+
+        Loading ->
+            ( model, Cmd.none )
+
+        Errored errorMessage ->
+            ( model, Cmd.none )
 
 selectUrl : String -> Status -> Status
 selectUrl url status =
