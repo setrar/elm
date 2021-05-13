@@ -45,6 +45,7 @@ $ elm make src/PhotoFolder.elm --output app.js
 ```html
 <html>
     <head>
+        <link rel="stylesheet" href="http://elm-in-action.com/styles.css">
     </head>
     <body>
         <div id="app"></div>

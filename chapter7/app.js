@@ -6109,8 +6109,54 @@ var $elm$http$Http$get = function (r) {
 	return $elm$http$Http$request(
 		{body: $elm$http$Http$emptyBody, expect: r.expect, headers: _List_Nil, method: 'GET', timeout: $elm$core$Maybe$Nothing, tracker: $elm$core$Maybe$Nothing, url: r.url});
 };
-var $author$project$PhotoFolder$initialModel = {selectedPhotoUrl: $elm$core$Maybe$Nothing};
-var $author$project$PhotoFolder$modelDecoder = $elm$json$Json$Decode$succeed($author$project$PhotoFolder$initialModel);
+var $author$project$PhotoFolder$initialModel = {photos: $elm$core$Dict$empty, selectedPhotoUrl: $elm$core$Maybe$Nothing};
+var $elm$core$Dict$fromList = function (assocs) {
+	return A3(
+		$elm$core$List$foldl,
+		F2(
+			function (_v0, dict) {
+				var key = _v0.a;
+				var value = _v0.b;
+				return A3($elm$core$Dict$insert, key, value, dict);
+			}),
+		$elm$core$Dict$empty,
+		assocs);
+};
+var $author$project$PhotoFolder$modelDecoder = $elm$json$Json$Decode$succeed(
+	{
+		photos: $elm$core$Dict$fromList(
+			_List_fromArray(
+				[
+					_Utils_Tuple2(
+					'trevi',
+					{
+						relatedUrls: _List_fromArray(
+							['coli', 'fresco']),
+						size: 34,
+						title: 'Trevi',
+						url: 'trevi'
+					}),
+					_Utils_Tuple2(
+					'fresco',
+					{
+						relatedUrls: _List_fromArray(
+							['trevi']),
+						size: 46,
+						title: 'Fresco',
+						url: 'fresco'
+					}),
+					_Utils_Tuple2(
+					'coli',
+					{
+						relatedUrls: _List_fromArray(
+							['trevi', 'fresco']),
+						size: 36,
+						title: 'Coliseum',
+						url: 'coli'
+					})
+				])),
+		selectedPhotoUrl: $elm$core$Maybe$Just('trevi')
+	});
 var $author$project$PhotoFolder$init = function (_v0) {
 	return _Utils_Tuple2(
 		$author$project$PhotoFolder$initialModel,
@@ -6144,16 +6190,146 @@ var $author$project$PhotoFolder$update = F2(
 			}
 		}
 	});
-var $elm$html$Html$h1 = _VirtualDom_node('h1');
+var $elm$core$Maybe$andThen = F2(
+	function (callback, maybeValue) {
+		if (maybeValue.$ === 'Just') {
+			var value = maybeValue.a;
+			return callback(value);
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
+var $elm$json$Json$Encode$string = _Json_wrap;
+var $elm$html$Html$Attributes$stringProperty = F2(
+	function (key, string) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$string(string));
+	});
+var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
+var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
-var $author$project$PhotoFolder$view = function (model) {
+var $elm$html$Html$h2 = _VirtualDom_node('h2');
+var $elm$html$Html$h3 = _VirtualDom_node('h3');
+var $elm$html$Html$img = _VirtualDom_node('img');
+var $elm$html$Html$span = _VirtualDom_node('span');
+var $elm$html$Html$Attributes$src = function (url) {
 	return A2(
-		$elm$html$Html$h1,
-		_List_Nil,
+		$elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
+var $author$project$PhotoFolder$urlPrefix = 'http://elm-in-action.com/';
+var $author$project$PhotoFolder$ClickedPhoto = function (a) {
+	return {$: 'ClickedPhoto', a: a};
+};
+var $elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var $elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var $elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		$elm$html$Html$Events$on,
+		'click',
+		$elm$json$Json$Decode$succeed(msg));
+};
+var $author$project$PhotoFolder$viewRelatedPhoto = function (url) {
+	return A2(
+		$elm$html$Html$img,
 		_List_fromArray(
 			[
-				$elm$html$Html$text('The Grooviest Folders the world has ever seen')
+				$elm$html$Html$Attributes$class('related-photo'),
+				$elm$html$Html$Events$onClick(
+				$author$project$PhotoFolder$ClickedPhoto(url)),
+				$elm$html$Html$Attributes$src($author$project$PhotoFolder$urlPrefix + ('photos/' + (url + '/thumb')))
+			]),
+		_List_Nil);
+};
+var $author$project$PhotoFolder$viewSelectedPhoto = function (photo) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('selected-photo')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$h2,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(photo.title)
+					])),
+				A2(
+				$elm$html$Html$img,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$src($author$project$PhotoFolder$urlPrefix + ('photos/' + (photo.url + '/full')))
+					]),
+				_List_Nil),
+				A2(
+				$elm$html$Html$span,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						$elm$core$String$fromInt(photo.size) + 'KB')
+					])),
+				A2(
+				$elm$html$Html$h3,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Related')
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('related-photos')
+					]),
+				A2($elm$core$List$map, $author$project$PhotoFolder$viewRelatedPhoto, photo.relatedUrls))
+			]));
+};
+var $author$project$PhotoFolder$view = function (model) {
+	var photoByUrl = function (url) {
+		return A2($elm$core$Dict$get, url, model.photos);
+	};
+	var selectedPhoto = function () {
+		var _v0 = A2($elm$core$Maybe$andThen, photoByUrl, model.selectedPhotoUrl);
+		if (_v0.$ === 'Just') {
+			var photo = _v0.a;
+			return $author$project$PhotoFolder$viewSelectedPhoto(photo);
+		} else {
+			return $elm$html$Html$text('');
+		}
+	}();
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('content')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('selected-photo')
+					]),
+				_List_fromArray(
+					[selectedPhoto]))
 			]));
 };
 var $author$project$PhotoFolder$main = $elm$browser$Browser$element(
