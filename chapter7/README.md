@@ -34,9 +34,28 @@ $ echo Y | elm install NoRedInk/elm-json-decode-pipeline
 
 :round_pushpin:  Create and Compile the application
 
+- [ ] Compile the application
+
 ```
 $ elm make src/PhotoFolder.elm --output app.js
 ```
+
+- [ ] Display the application
+
+```html
+<html>
+    <head>
+    </head>
+    <body>
+        <div id="app"></div>
+        <script src="app.js"></script>
+        <script>
+            Elm.PhotoFolder.init( { node: document.getElementById("app")} );
+        </script>
+    </body>
+</html>
+```
+
 
 ## :ab: Run the project
 
