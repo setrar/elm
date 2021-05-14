@@ -6192,7 +6192,7 @@ var $author$project$PhotoFolder$modelDecoder = $elm$json$Json$Decode$succeed(
 						}),
 						$author$project$PhotoFolder$Folder(
 						{
-							expanded: true,
+							expanded: false,
 							name: '2017',
 							photoUrls: _List_Nil,
 							subfolders: _List_fromArray(
