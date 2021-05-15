@@ -38,6 +38,13 @@ $ echo Y | elm install elm/json
 $ echo Y | elm install NoRedInk/elm-json-decode-pipeline
 ```
 
+- [ ] Add the [`elm/url`](https://package.elm-lang.org/packages/elm/url/latest/Url) library
+
+
+```
+$ echo Y | elm install NoRedInk/elm-json-decode-pipeline
+```
+
 :round_pushpin:  Create and Compile the application
 
 - [ ] Compile the application
@@ -74,3 +81,20 @@ test on:
 
 http://localhost:8000
 
+## :o: Installing http-server-spa
+
+- [ ] Install the server globally
+
+```
+$ npm install http-server-spa --global
+```
+
+- [ ] run the server
+
+```
+$ http-server-spa .
+```
+
+run on:
+
+http://localhost:8080
