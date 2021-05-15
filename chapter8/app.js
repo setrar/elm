@@ -7499,5 +7499,34 @@ var $author$project$PhotoFolder$main = $elm$browser$Browser$element(
 		update: $author$project$PhotoFolder$update,
 		view: $author$project$PhotoFolder$view
 	});
-_Platform_export({'PhotoFolder':{'init':$author$project$PhotoFolder$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))(0)},'PhotoGroove':{'init':$author$project$PhotoGroove$main($elm$json$Json$Decode$float)(0)}});}(this));
+var $elm$browser$Browser$document = _Browser_document;
+var $author$project$Main$subscriptions = function (model) {
+	return $elm$core$Platform$Sub$none;
+};
+var $author$project$Main$update = F2(
+	function (msg, model) {
+		return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+	});
+var $author$project$Main$view = function (model) {
+	return {
+		body: _List_fromArray(
+			[
+				$elm$html$Html$text('This isn\'t even my final form!')
+			]),
+		title: 'Photo Groove, SPA Style'
+	};
+};
+var $author$project$Main$main = $elm$browser$Browser$document(
+	{
+		init: function (_v0) {
+			return _Utils_Tuple2(
+				{},
+				$elm$core$Platform$Cmd$none);
+		},
+		subscriptions: $author$project$Main$subscriptions,
+		update: $author$project$Main$update,
+		view: $author$project$Main$view
+	});
+_Platform_export({'Main':{'init':$author$project$Main$main(
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))(0)},'PhotoGroove':{'init':$author$project$PhotoGroove$main($elm$json$Json$Decode$float)(0)},'PhotoFolder':{'init':$author$project$PhotoFolder$main(
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))(0)}});}(this));

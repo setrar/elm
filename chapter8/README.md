@@ -43,7 +43,7 @@ $ echo Y | elm install NoRedInk/elm-json-decode-pipeline
 - [ ] Compile the application
 
 ```
-$ elm make src/PhotoFolder.elm src/PhotoGroove.elm --output app.js    
+$ elm make src/Main.elm src/PhotoFolder.elm src/PhotoGroove.elm --output app.js
 ```
 
 - [ ] Display the application
@@ -57,7 +57,7 @@ $ elm make src/PhotoFolder.elm src/PhotoGroove.elm --output app.js
         <div id="app"></div>
         <script src="app.js"></script>
         <script>
-            Elm.PhotoFolder.init( { node: document.getElementById("app")} );
+            Elm.Main.init( { node: document.getElementById("app")} );
         </script>
     </body>
 </html>
