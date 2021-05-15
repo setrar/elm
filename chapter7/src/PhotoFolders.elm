@@ -1,4 +1,4 @@
-module PhotoFolder exposing (main)
+module PhotoFolders exposing (main)
 
 import Http
 import Json.Decode as Decode exposing (Decoder, int, string, list)

@@ -5319,7 +5319,7 @@ var $elm$core$Task$perform = F2(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$element = _Browser_element;
-var $author$project$PhotoFolder$GotInitialModel = function (a) {
+var $author$project$PhotoFolders$GotInitialModel = function (a) {
 	return {$: 'GotInitialModel', a: a};
 };
 var $elm$json$Json$Decode$decodeString = _Json_runOnString;
@@ -6109,18 +6109,18 @@ var $elm$http$Http$get = function (r) {
 	return $elm$http$Http$request(
 		{body: $elm$http$Http$emptyBody, expect: r.expect, headers: _List_Nil, method: 'GET', timeout: $elm$core$Maybe$Nothing, tracker: $elm$core$Maybe$Nothing, url: r.url});
 };
-var $author$project$PhotoFolder$Folder = function (a) {
+var $author$project$PhotoFolders$Folder = function (a) {
 	return {$: 'Folder', a: a};
 };
-var $author$project$PhotoFolder$initialModel = {
+var $author$project$PhotoFolders$initialModel = {
 	photos: $elm$core$Dict$empty,
-	root: $author$project$PhotoFolder$Folder(
+	root: $author$project$PhotoFolders$Folder(
 		{expanded: true, name: 'Loading...', photoUrls: _List_Nil, subfolders: _List_Nil}),
 	selectedPhotoUrl: $elm$core$Maybe$Nothing
 };
-var $author$project$PhotoFolder$folderFromJson = F3(
+var $author$project$PhotoFolders$folderFromJson = F3(
 	function (name, photos, subfolders) {
-		return $author$project$PhotoFolder$Folder(
+		return $author$project$PhotoFolders$Folder(
 			{
 				expanded: true,
 				name: name,
@@ -6136,7 +6136,7 @@ var $elm$json$Json$Decode$lazy = function (thunk) {
 		$elm$json$Json$Decode$succeed(_Utils_Tuple0));
 };
 var $elm$json$Json$Decode$list = _Json_decodeList;
-var $author$project$PhotoFolder$finishPhoto = function (_v0) {
+var $author$project$PhotoFolders$finishPhoto = function (_v0) {
 	var url = _v0.a;
 	var json = _v0.b;
 	return _Utils_Tuple2(
@@ -6155,11 +6155,11 @@ var $elm$core$Dict$fromList = function (assocs) {
 		$elm$core$Dict$empty,
 		assocs);
 };
-var $author$project$PhotoFolder$fromPairs = function (pairs) {
+var $author$project$PhotoFolders$fromPairs = function (pairs) {
 	return $elm$core$Dict$fromList(
-		A2($elm$core$List$map, $author$project$PhotoFolder$finishPhoto, pairs));
+		A2($elm$core$List$map, $author$project$PhotoFolders$finishPhoto, pairs));
 };
-var $author$project$PhotoFolder$JsonPhoto = F3(
+var $author$project$PhotoFolders$JsonPhoto = F3(
 	function (title, size, relatedUrls) {
 		return {relatedUrls: relatedUrls, size: size, title: title};
 	});
@@ -6174,7 +6174,7 @@ var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required = F3(
 			decoder);
 	});
 var $elm$json$Json$Decode$string = _Json_decodeString;
-var $author$project$PhotoFolder$jsonPhotoDecoder = A3(
+var $author$project$PhotoFolders$jsonPhotoDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 	'related_photos',
 	$elm$json$Json$Decode$list($elm$json$Json$Decode$string),
@@ -6186,38 +6186,38 @@ var $author$project$PhotoFolder$jsonPhotoDecoder = A3(
 			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 			'title',
 			$elm$json$Json$Decode$string,
-			$elm$json$Json$Decode$succeed($author$project$PhotoFolder$JsonPhoto))));
+			$elm$json$Json$Decode$succeed($author$project$PhotoFolders$JsonPhoto))));
 var $elm$json$Json$Decode$keyValuePairs = _Json_decodeKeyValuePairs;
-var $author$project$PhotoFolder$photosDecoder = A2(
+var $author$project$PhotoFolders$photosDecoder = A2(
 	$elm$json$Json$Decode$map,
-	$author$project$PhotoFolder$fromPairs,
-	$elm$json$Json$Decode$keyValuePairs($author$project$PhotoFolder$jsonPhotoDecoder));
-function $author$project$PhotoFolder$cyclic$folderDecoder() {
+	$author$project$PhotoFolders$fromPairs,
+	$elm$json$Json$Decode$keyValuePairs($author$project$PhotoFolders$jsonPhotoDecoder));
+function $author$project$PhotoFolders$cyclic$folderDecoder() {
 	return A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 		'subfolders',
 		$elm$json$Json$Decode$lazy(
 			function (_v0) {
 				return $elm$json$Json$Decode$list(
-					$author$project$PhotoFolder$cyclic$folderDecoder());
+					$author$project$PhotoFolders$cyclic$folderDecoder());
 			}),
 		A3(
 			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 			'photos',
-			$author$project$PhotoFolder$photosDecoder,
+			$author$project$PhotoFolders$photosDecoder,
 			A3(
 				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 				'name',
 				$elm$json$Json$Decode$string,
-				$elm$json$Json$Decode$succeed($author$project$PhotoFolder$folderFromJson))));
+				$elm$json$Json$Decode$succeed($author$project$PhotoFolders$folderFromJson))));
 }
 try {
-	var $author$project$PhotoFolder$folderDecoder = $author$project$PhotoFolder$cyclic$folderDecoder();
-	$author$project$PhotoFolder$cyclic$folderDecoder = function () {
-		return $author$project$PhotoFolder$folderDecoder;
+	var $author$project$PhotoFolders$folderDecoder = $author$project$PhotoFolders$cyclic$folderDecoder();
+	$author$project$PhotoFolders$cyclic$folderDecoder = function () {
+		return $author$project$PhotoFolders$folderDecoder;
 	};
 } catch ($) {
-	throw 'Some top-level definitions from `PhotoFolder` are causing infinite recursion:\n\n  ┌─────┐\n  │    folderDecoder\n  └─────┘\n\nThese errors are very tricky, so read https://elm-lang.org/0.19.1/bad-recursion to learn how to fix it!';}
+	throw 'Some top-level definitions from `PhotoFolders` are causing infinite recursion:\n\n  ┌─────┐\n  │    folderDecoder\n  └─────┘\n\nThese errors are very tricky, so read https://elm-lang.org/0.19.1/bad-recursion to learn how to fix it!';}
 var $elm$core$Dict$foldl = F3(
 	function (func, acc, dict) {
 		foldl:
@@ -6247,46 +6247,46 @@ var $elm$core$Dict$union = F2(
 	function (t1, t2) {
 		return A3($elm$core$Dict$foldl, $elm$core$Dict$insert, t2, t1);
 	});
-var $author$project$PhotoFolder$modelPhotosFromJson = F2(
+var $author$project$PhotoFolders$modelPhotosFromJson = F2(
 	function (folderPhotos, subfolderPhotos) {
 		return A3($elm$core$List$foldl, $elm$core$Dict$union, folderPhotos, subfolderPhotos);
 	});
-function $author$project$PhotoFolder$cyclic$modelPhotosDecoder() {
+function $author$project$PhotoFolders$cyclic$modelPhotosDecoder() {
 	return A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 		'subfolders',
 		$elm$json$Json$Decode$lazy(
 			function (_v0) {
 				return $elm$json$Json$Decode$list(
-					$author$project$PhotoFolder$cyclic$modelPhotosDecoder());
+					$author$project$PhotoFolders$cyclic$modelPhotosDecoder());
 			}),
 		A3(
 			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 			'photos',
-			$author$project$PhotoFolder$photosDecoder,
-			$elm$json$Json$Decode$succeed($author$project$PhotoFolder$modelPhotosFromJson)));
+			$author$project$PhotoFolders$photosDecoder,
+			$elm$json$Json$Decode$succeed($author$project$PhotoFolders$modelPhotosFromJson)));
 }
 try {
-	var $author$project$PhotoFolder$modelPhotosDecoder = $author$project$PhotoFolder$cyclic$modelPhotosDecoder();
-	$author$project$PhotoFolder$cyclic$modelPhotosDecoder = function () {
-		return $author$project$PhotoFolder$modelPhotosDecoder;
+	var $author$project$PhotoFolders$modelPhotosDecoder = $author$project$PhotoFolders$cyclic$modelPhotosDecoder();
+	$author$project$PhotoFolders$cyclic$modelPhotosDecoder = function () {
+		return $author$project$PhotoFolders$modelPhotosDecoder;
 	};
 } catch ($) {
-	throw 'Some top-level definitions from `PhotoFolder` are causing infinite recursion:\n\n  ┌─────┐\n  │    modelPhotosDecoder\n  └─────┘\n\nThese errors are very tricky, so read https://elm-lang.org/0.19.1/bad-recursion to learn how to fix it!';}
-var $author$project$PhotoFolder$modelDecoder = A3(
+	throw 'Some top-level definitions from `PhotoFolders` are causing infinite recursion:\n\n  ┌─────┐\n  │    modelPhotosDecoder\n  └─────┘\n\nThese errors are very tricky, so read https://elm-lang.org/0.19.1/bad-recursion to learn how to fix it!';}
+var $author$project$PhotoFolders$modelDecoder = A3(
 	$elm$json$Json$Decode$map2,
 	F2(
 		function (photos, root) {
 			return {photos: photos, root: root, selectedPhotoUrl: $elm$core$Maybe$Nothing};
 		}),
-	$author$project$PhotoFolder$modelPhotosDecoder,
-	$author$project$PhotoFolder$folderDecoder);
-var $author$project$PhotoFolder$init = function (_v0) {
+	$author$project$PhotoFolders$modelPhotosDecoder,
+	$author$project$PhotoFolders$folderDecoder);
+var $author$project$PhotoFolders$init = function (_v0) {
 	return _Utils_Tuple2(
-		$author$project$PhotoFolder$initialModel,
+		$author$project$PhotoFolders$initialModel,
 		$elm$http$Http$get(
 			{
-				expect: A2($elm$http$Http$expectJson, $author$project$PhotoFolder$GotInitialModel, $author$project$PhotoFolder$modelDecoder),
+				expect: A2($elm$http$Http$expectJson, $author$project$PhotoFolders$GotInitialModel, $author$project$PhotoFolders$modelDecoder),
 				url: 'http://elm-in-action.com/folders/list'
 			}));
 };
@@ -6295,11 +6295,11 @@ var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $elm$core$Basics$not = _Basics_not;
-var $author$project$PhotoFolder$toggleExpanded = F2(
+var $author$project$PhotoFolders$toggleExpanded = F2(
 	function (path, _v0) {
 		var folder = _v0.a;
 		if (path.$ === 'End') {
-			return $author$project$PhotoFolder$Folder(
+			return $author$project$PhotoFolders$Folder(
 				_Utils_update(
 					folder,
 					{expanded: !folder.expanded}));
@@ -6308,16 +6308,16 @@ var $author$project$PhotoFolder$toggleExpanded = F2(
 			var remainingPath = path.b;
 			var transform = F2(
 				function (currentIndex, currentSubfolder) {
-					return _Utils_eq(currentIndex, targetIndex) ? A2($author$project$PhotoFolder$toggleExpanded, remainingPath, currentSubfolder) : currentSubfolder;
+					return _Utils_eq(currentIndex, targetIndex) ? A2($author$project$PhotoFolders$toggleExpanded, remainingPath, currentSubfolder) : currentSubfolder;
 				});
 			var subfolders = A2($elm$core$List$indexedMap, transform, folder.subfolders);
-			return $author$project$PhotoFolder$Folder(
+			return $author$project$PhotoFolders$Folder(
 				_Utils_update(
 					folder,
 					{subfolders: subfolders}));
 		}
 	});
-var $author$project$PhotoFolder$update = F2(
+var $author$project$PhotoFolders$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
 			case 'ClickedFolder':
@@ -6326,7 +6326,7 @@ var $author$project$PhotoFolder$update = F2(
 					_Utils_update(
 						model,
 						{
-							root: A2($author$project$PhotoFolder$toggleExpanded, path, model.root)
+							root: A2($author$project$PhotoFolders$toggleExpanded, path, model.root)
 						}),
 					$elm$core$Platform$Cmd$none);
 			case 'ClickedPhoto':
@@ -6347,7 +6347,7 @@ var $author$project$PhotoFolder$update = F2(
 				}
 		}
 	});
-var $author$project$PhotoFolder$End = {$: 'End'};
+var $author$project$PhotoFolders$End = {$: 'End'};
 var $elm$core$Maybe$andThen = F2(
 	function (callback, maybeValue) {
 		if (maybeValue.$ === 'Just') {
@@ -6370,7 +6370,7 @@ var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
-var $author$project$PhotoFolder$ClickedFolder = function (a) {
+var $author$project$PhotoFolders$ClickedFolder = function (a) {
 	return {$: 'ClickedFolder', a: a};
 };
 var $elm$core$List$append = F2(
@@ -6381,21 +6381,21 @@ var $elm$core$List$append = F2(
 			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
 		}
 	});
-var $author$project$PhotoFolder$Subfolder = F2(
+var $author$project$PhotoFolders$Subfolder = F2(
 	function (a, b) {
 		return {$: 'Subfolder', a: a, b: b};
 	});
-var $author$project$PhotoFolder$appendIndex = F2(
+var $author$project$PhotoFolders$appendIndex = F2(
 	function (index, path) {
 		if (path.$ === 'End') {
-			return A2($author$project$PhotoFolder$Subfolder, index, $author$project$PhotoFolder$End);
+			return A2($author$project$PhotoFolders$Subfolder, index, $author$project$PhotoFolders$End);
 		} else {
 			var subfolderIndex = path.a;
 			var remainingPath = path.b;
 			return A2(
-				$author$project$PhotoFolder$Subfolder,
+				$author$project$PhotoFolders$Subfolder,
 				subfolderIndex,
-				A2($author$project$PhotoFolder$appendIndex, index, remainingPath));
+				A2($author$project$PhotoFolders$appendIndex, index, remainingPath));
 		}
 	});
 var $elm$html$Html$label = _VirtualDom_node('label');
@@ -6416,31 +6416,31 @@ var $elm$html$Html$Events$onClick = function (msg) {
 		'click',
 		$elm$json$Json$Decode$succeed(msg));
 };
-var $author$project$PhotoFolder$ClickedPhoto = function (a) {
+var $author$project$PhotoFolders$ClickedPhoto = function (a) {
 	return {$: 'ClickedPhoto', a: a};
 };
-var $author$project$PhotoFolder$viewPhoto = function (url) {
+var $author$project$PhotoFolders$viewPhoto = function (url) {
 	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
 			[
 				$elm$html$Html$Attributes$class('photo'),
 				$elm$html$Html$Events$onClick(
-				$author$project$PhotoFolder$ClickedPhoto(url))
+				$author$project$PhotoFolders$ClickedPhoto(url))
 			]),
 		_List_fromArray(
 			[
 				$elm$html$Html$text(url)
 			]));
 };
-var $author$project$PhotoFolder$viewFolder = F2(
+var $author$project$PhotoFolders$viewFolder = F2(
 	function (path, _v0) {
 		var folder = _v0.a;
 		var viewSubfolder = F2(
 			function (index, subfolder) {
 				return A2(
-					$author$project$PhotoFolder$viewFolder,
-					A2($author$project$PhotoFolder$appendIndex, index, path),
+					$author$project$PhotoFolders$viewFolder,
+					A2($author$project$PhotoFolders$appendIndex, index, path),
 					subfolder);
 			});
 		var folderLabel = A2(
@@ -6448,7 +6448,7 @@ var $author$project$PhotoFolder$viewFolder = F2(
 			_List_fromArray(
 				[
 					$elm$html$Html$Events$onClick(
-					$author$project$PhotoFolder$ClickedFolder(path))
+					$author$project$PhotoFolders$ClickedFolder(path))
 				]),
 			_List_fromArray(
 				[
@@ -6458,7 +6458,7 @@ var $author$project$PhotoFolder$viewFolder = F2(
 			var contents = A2(
 				$elm$core$List$append,
 				A2($elm$core$List$indexedMap, viewSubfolder, folder.subfolders),
-				A2($elm$core$List$map, $author$project$PhotoFolder$viewPhoto, folder.photoUrls));
+				A2($elm$core$List$map, $author$project$PhotoFolders$viewPhoto, folder.photoUrls));
 			return A2(
 				$elm$html$Html$div,
 				_List_fromArray(
@@ -6497,20 +6497,20 @@ var $elm$html$Html$Attributes$src = function (url) {
 		'src',
 		_VirtualDom_noJavaScriptOrHtmlUri(url));
 };
-var $author$project$PhotoFolder$urlPrefix = 'http://elm-in-action.com/';
-var $author$project$PhotoFolder$viewRelatedPhoto = function (url) {
+var $author$project$PhotoFolders$urlPrefix = 'http://elm-in-action.com/';
+var $author$project$PhotoFolders$viewRelatedPhoto = function (url) {
 	return A2(
 		$elm$html$Html$img,
 		_List_fromArray(
 			[
 				$elm$html$Html$Attributes$class('related-photo'),
 				$elm$html$Html$Events$onClick(
-				$author$project$PhotoFolder$ClickedPhoto(url)),
-				$elm$html$Html$Attributes$src($author$project$PhotoFolder$urlPrefix + ('photos/' + (url + '/thumb')))
+				$author$project$PhotoFolders$ClickedPhoto(url)),
+				$elm$html$Html$Attributes$src($author$project$PhotoFolders$urlPrefix + ('photos/' + (url + '/thumb')))
 			]),
 		_List_Nil);
 };
-var $author$project$PhotoFolder$viewSelectedPhoto = function (photo) {
+var $author$project$PhotoFolders$viewSelectedPhoto = function (photo) {
 	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
@@ -6530,7 +6530,7 @@ var $author$project$PhotoFolder$viewSelectedPhoto = function (photo) {
 				$elm$html$Html$img,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$src($author$project$PhotoFolder$urlPrefix + ('photos/' + (photo.url + '/full')))
+						$elm$html$Html$Attributes$src($author$project$PhotoFolders$urlPrefix + ('photos/' + (photo.url + '/full')))
 					]),
 				_List_Nil),
 				A2(
@@ -6554,10 +6554,10 @@ var $author$project$PhotoFolder$viewSelectedPhoto = function (photo) {
 					[
 						$elm$html$Html$Attributes$class('related-photos')
 					]),
-				A2($elm$core$List$map, $author$project$PhotoFolder$viewRelatedPhoto, photo.relatedUrls))
+				A2($elm$core$List$map, $author$project$PhotoFolders$viewRelatedPhoto, photo.relatedUrls))
 			]));
 };
-var $author$project$PhotoFolder$view = function (model) {
+var $author$project$PhotoFolders$view = function (model) {
 	var photoByUrl = function (url) {
 		return A2($elm$core$Dict$get, url, model.photos);
 	};
@@ -6565,7 +6565,7 @@ var $author$project$PhotoFolder$view = function (model) {
 		var _v0 = A2($elm$core$Maybe$andThen, photoByUrl, model.selectedPhotoUrl);
 		if (_v0.$ === 'Just') {
 			var photo = _v0.a;
-			return $author$project$PhotoFolder$viewSelectedPhoto(photo);
+			return $author$project$PhotoFolders$viewSelectedPhoto(photo);
 		} else {
 			return $elm$html$Html$text('');
 		}
@@ -6593,7 +6593,7 @@ var $author$project$PhotoFolder$view = function (model) {
 							[
 								$elm$html$Html$text('Folders')
 							])),
-						A2($author$project$PhotoFolder$viewFolder, $author$project$PhotoFolder$End, model.root)
+						A2($author$project$PhotoFolders$viewFolder, $author$project$PhotoFolders$End, model.root)
 					])),
 				A2(
 				$elm$html$Html$div,
@@ -6605,14 +6605,14 @@ var $author$project$PhotoFolder$view = function (model) {
 					[selectedPhoto]))
 			]));
 };
-var $author$project$PhotoFolder$main = $elm$browser$Browser$element(
+var $author$project$PhotoFolders$main = $elm$browser$Browser$element(
 	{
-		init: $author$project$PhotoFolder$init,
+		init: $author$project$PhotoFolders$init,
 		subscriptions: function (_v0) {
 			return $elm$core$Platform$Sub$none;
 		},
-		update: $author$project$PhotoFolder$update,
-		view: $author$project$PhotoFolder$view
+		update: $author$project$PhotoFolders$update,
+		view: $author$project$PhotoFolders$view
 	});
-_Platform_export({'PhotoFolder':{'init':$author$project$PhotoFolder$main(
+_Platform_export({'PhotoFolders':{'init':$author$project$PhotoFolders$main(
 	$elm$json$Json$Decode$succeed(_Utils_Tuple0))(0)}});}(this));
