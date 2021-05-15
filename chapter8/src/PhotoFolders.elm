@@ -163,6 +163,7 @@ main =
         }
 -}
 
+-- Avoid compiler complain issue
 main =
   Html.text "Hello!"
 
