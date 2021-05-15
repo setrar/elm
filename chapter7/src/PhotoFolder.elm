@@ -232,7 +232,7 @@ toggleExpanded path (Folder folder) =
         End ->
             Folder { folder | expanded = not folder.expanded }
 
-        Subfolder targetIndex remaningPath ->
+        Subfolder targetIndex remainingPath ->
             let
                 subfolders : List Folder
                 subfolders =
@@ -241,7 +241,7 @@ toggleExpanded path (Folder folder) =
                 transform : Int -> Folder -> Folder
                 transform currentIndex currentSubfolder =
                     if currentIndex == targetIndex then
-                        toggleExpanded remaningPath currentSubfolder
+                        toggleExpanded remainingPath currentSubfolder
                     else
                         currentSubfolder
             in

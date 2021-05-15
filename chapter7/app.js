@@ -6237,10 +6237,10 @@ var $author$project$PhotoFolder$toggleExpanded = F2(
 					{expanded: !folder.expanded}));
 		} else {
 			var targetIndex = path.a;
-			var remaningPath = path.b;
+			var remainingPath = path.b;
 			var transform = F2(
 				function (currentIndex, currentSubfolder) {
-					return _Utils_eq(currentIndex, targetIndex) ? A2($author$project$PhotoFolder$toggleExpanded, remaningPath, currentSubfolder) : currentSubfolder;
+					return _Utils_eq(currentIndex, targetIndex) ? A2($author$project$PhotoFolder$toggleExpanded, remainingPath, currentSubfolder) : currentSubfolder;
 				});
 			var subfolders = A2($elm$core$List$indexedMap, transform, folder.subfolders);
 			return $author$project$PhotoFolder$Folder(
