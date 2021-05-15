@@ -1,8 +1,8 @@
 module PhotoFolder exposing (main)
 
 import Http
-import Json.Decode as Decode exposing (Decoder) --(int, list, string)
--- import Json.Decode.Pipeline exposing (required)
+import Json.Decode as Decode exposing (Decoder, int, string, list)
+import Json.Decode.Pipeline exposing (required)
 import Browser
 import Html exposing (Html, div, h1, h2, h3, img, label, span, text)
 import Html.Attributes exposing (class, src)
@@ -41,6 +41,15 @@ init _ =
 
 modelDecoder : Decoder Model
 modelDecoder =
+    Decode.map2
+        (\photos root ->
+            { photos = photos, root = root, selectedPhotoUrl = Nothing }
+        )
+        modelPhotosDecoder
+        folderDecoder
+
+modelDecoderItaly : Decoder Model
+modelDecoderItaly =
     Decode.succeed
     { selectedPhotoUrl = Just "trevi"
     , photos = Dict.fromList
@@ -247,3 +256,62 @@ toggleExpanded path (Folder folder) =
             in
             Folder { folder | subfolders = subfolders }
 
+type alias JsonPhoto =
+    { title : String
+    , size : Int
+    , relatedUrls : List String
+    }
+
+jsonPhotoDecoder : Decoder JsonPhoto
+jsonPhotoDecoder =
+    Decode.succeed JsonPhoto
+        |> required "title" string
+        |> required "size" int
+        |> required "related_photos" (list string)
+
+finishPhoto : ( String, JsonPhoto ) -> ( String, Photo )
+finishPhoto ( url, json ) =
+    ( url
+    , { url = url
+      , size = json.size
+      , title = json.title
+      , relatedUrls = json.relatedUrls
+      }
+    )
+
+fromPairs : List ( String, JsonPhoto ) -> Dict String Photo
+fromPairs pairs =
+    pairs
+        |> List.map finishPhoto
+        |> Dict.fromList
+
+photosDecoder : Decoder ( Dict String Photo)
+photosDecoder =
+    Decode.keyValuePairs jsonPhotoDecoder
+        |> Decode.map fromPairs
+
+folderDecoder : Decoder Folder
+folderDecoder =
+    Decode.succeed folderFromJson
+        |> required "name" string
+        |> required "photos" photosDecoder
+        |> required "subfolders" (Decode.lazy (\_ -> list folderDecoder))
+
+folderFromJson : String -> Dict String Photo -> List Folder -> Folder
+folderFromJson name photos subfolders =
+    Folder
+    { name = name
+    , expanded = True
+    , subfolders = subfolders
+    , photoUrls = Dict.keys photos
+    }
+
+modelPhotosDecoder : Decoder (Dict String Photo)
+modelPhotosDecoder =
+    Decode.succeed modelPhotosFromJson
+        |> required "photos" photosDecoder
+        |> required "subfolders" (Decode.lazy (\_ -> list modelPhotosDecoder))
+
+modelPhotosFromJson : Dict String Photo -> List (Dict String Photo) -> Dict String Photo
+modelPhotosFromJson folderPhotos subfolderPhotos =
+    List.foldl Dict.union folderPhotos subfolderPhotos
