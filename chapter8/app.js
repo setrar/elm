@@ -7499,6 +7499,7 @@ var $author$project$PhotoFolder$main = $elm$browser$Browser$element(
 		update: $author$project$PhotoFolder$update,
 		view: $author$project$PhotoFolder$view
 	});
+var $author$project$Main$Folders = {$: 'Folders'};
 var $elm$browser$Browser$document = _Browser_document;
 var $author$project$Main$subscriptions = function (model) {
 	return $elm$core$Platform$Sub$none;
@@ -7507,11 +7508,91 @@ var $author$project$Main$update = F2(
 	function (msg, model) {
 		return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 	});
+var $elm$html$Html$footer = _VirtualDom_node('footer');
+var $author$project$Main$viewFooter = A2(
+	$elm$html$Html$footer,
+	_List_Nil,
+	_List_fromArray(
+		[
+			$elm$html$Html$text('One is never alone with a rubber duck. -Douglas Adam')
+		]));
+var $author$project$Main$Gallery = {$: 'Gallery'};
+var $elm$html$Html$a = _VirtualDom_node('a');
+var $elm$html$Html$Attributes$href = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'href',
+		_VirtualDom_noJavaScriptUri(url));
+};
+var $elm$html$Html$li = _VirtualDom_node('li');
+var $elm$html$Html$nav = _VirtualDom_node('nav');
+var $elm$html$Html$ul = _VirtualDom_node('ul');
+var $author$project$Main$viewHeader = function (page) {
+	var navLink = F2(
+		function (targetPage, _v0) {
+			var url = _v0.url;
+			var caption = _v0.caption;
+			return A2(
+				$elm$html$Html$li,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$classList(
+						_List_fromArray(
+							[
+								_Utils_Tuple2(
+								'active',
+								_Utils_eq(page, targetPage))
+							]))
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$a,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$href(url)
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(caption)
+							]))
+					]));
+		});
+	var logo = A2(
+		$elm$html$Html$h1,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text('Photo Groove')
+			]));
+	var links = A2(
+		$elm$html$Html$ul,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				navLink,
+				$author$project$Main$Folders,
+				{caption: 'Folders', url: '/'}),
+				A2(
+				navLink,
+				$author$project$Main$Gallery,
+				{caption: 'Gallery', url: '/gallery'})
+			]));
+	return A2(
+		$elm$html$Html$nav,
+		_List_Nil,
+		_List_fromArray(
+			[logo, links]));
+};
 var $author$project$Main$view = function (model) {
+	var content = $elm$html$Html$text('This isn\'t even my final form!');
 	return {
 		body: _List_fromArray(
 			[
-				$elm$html$Html$text('This isn\'t even my final form!')
+				$author$project$Main$viewHeader(model.page),
+				content,
+				$author$project$Main$viewFooter
 			]),
 		title: 'Photo Groove, SPA Style'
 	};
@@ -7520,7 +7601,7 @@ var $author$project$Main$main = $elm$browser$Browser$document(
 	{
 		init: function (_v0) {
 			return _Utils_Tuple2(
-				{},
+				{page: $author$project$Main$Folders},
 				$elm$core$Platform$Cmd$none);
 		},
 		subscriptions: $author$project$Main$subscriptions,
