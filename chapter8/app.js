@@ -7066,12 +7066,6 @@ var $author$project$Main$ClickedLink = function (a) {
 	return {$: 'ClickedLink', a: a};
 };
 var $elm$browser$Browser$application = _Browser_application;
-var $author$project$Main$FoldersPage = function (a) {
-	return {$: 'FoldersPage', a: a};
-};
-var $author$project$Main$GalleryPage = function (a) {
-	return {$: 'GalleryPage', a: a};
-};
 var $author$project$Main$NotFound = {$: 'NotFound'};
 var $author$project$PhotoFolders$GotInitialModel = function (a) {
 	return {$: 'GotInitialModel', a: a};
@@ -7526,42 +7520,83 @@ var $author$project$Main$parser = $elm$url$Url$Parser$oneOf(
 				$elm$url$Url$Parser$s('photos'),
 				$elm$url$Url$Parser$string))
 		]));
-var $author$project$Main$urlToPage = F2(
-	function (version, url) {
+var $author$project$Main$FoldersPage = function (a) {
+	return {$: 'FoldersPage', a: a};
+};
+var $author$project$Main$GotFoldersMsg = function (a) {
+	return {$: 'GotFoldersMsg', a: a};
+};
+var $elm$core$Platform$Cmd$map = _Platform_map;
+var $author$project$Main$toFolders = F2(
+	function (model, _v0) {
+		var folders = _v0.a;
+		var cmd = _v0.b;
+		return _Utils_Tuple2(
+			_Utils_update(
+				model,
+				{
+					page: $author$project$Main$FoldersPage(folders)
+				}),
+			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotFoldersMsg, cmd));
+	});
+var $author$project$Main$GalleryPage = function (a) {
+	return {$: 'GalleryPage', a: a};
+};
+var $author$project$Main$GotGalleryMsg = function (a) {
+	return {$: 'GotGalleryMsg', a: a};
+};
+var $author$project$Main$toGallery = F2(
+	function (model, _v0) {
+		var gallery = _v0.a;
+		var cmd = _v0.b;
+		return _Utils_Tuple2(
+			_Utils_update(
+				model,
+				{
+					page: $author$project$Main$GalleryPage(gallery)
+				}),
+			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotGalleryMsg, cmd));
+	});
+var $author$project$Main$updateUrl = F2(
+	function (url, model) {
 		var _v0 = A2($elm$url$Url$Parser$parse, $author$project$Main$parser, url);
 		if (_v0.$ === 'Just') {
 			switch (_v0.a.$) {
 				case 'Gallery':
 					var _v1 = _v0.a;
-					return $author$project$Main$GalleryPage(
-						$author$project$PhotoGallery$init(version).a);
+					return A2(
+						$author$project$Main$toGallery,
+						model,
+						$author$project$PhotoGallery$init(model.version));
 				case 'Folders':
 					var _v2 = _v0.a;
-					return $author$project$Main$FoldersPage(
-						$author$project$PhotoFolders$init($elm$core$Maybe$Nothing).a);
+					return A2(
+						$author$project$Main$toFolders,
+						model,
+						$author$project$PhotoFolders$init($elm$core$Maybe$Nothing));
 				default:
 					var filename = _v0.a.a;
-					return $author$project$Main$FoldersPage(
+					return A2(
+						$author$project$Main$toFolders,
+						model,
 						$author$project$PhotoFolders$init(
-							$elm$core$Maybe$Just(filename)).a);
+							$elm$core$Maybe$Just(filename)));
 			}
 		} else {
-			return $author$project$Main$NotFound;
+			return _Utils_Tuple2(
+				_Utils_update(
+					model,
+					{page: $author$project$Main$NotFound}),
+				$elm$core$Platform$Cmd$none);
 		}
 	});
 var $author$project$Main$init = F3(
 	function (version, url, key) {
-		return _Utils_Tuple2(
-			{
-				key: key,
-				page: A2($author$project$Main$urlToPage, version, url),
-				version: version
-			},
-			$elm$core$Platform$Cmd$none);
+		return A2(
+			$author$project$Main$updateUrl,
+			url,
+			{key: key, page: $author$project$Main$NotFound, version: version});
 	});
-var $author$project$Main$GotGalleryMsg = function (a) {
-	return {$: 'GotGalleryMsg', a: a};
-};
 var $elm$core$Platform$Sub$map = _Platform_map;
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
@@ -7579,34 +7614,6 @@ var $author$project$Main$subscriptions = function (model) {
 };
 var $elm$browser$Browser$Navigation$load = _Browser_load;
 var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
-var $author$project$Main$GotFoldersMsg = function (a) {
-	return {$: 'GotFoldersMsg', a: a};
-};
-var $elm$core$Platform$Cmd$map = _Platform_map;
-var $author$project$Main$toFolders = F2(
-	function (model, _v0) {
-		var folders = _v0.a;
-		var cmd = _v0.b;
-		return _Utils_Tuple2(
-			_Utils_update(
-				model,
-				{
-					page: $author$project$Main$FoldersPage(folders)
-				}),
-			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotFoldersMsg, cmd));
-	});
-var $author$project$Main$toGallery = F2(
-	function (model, _v0) {
-		var gallery = _v0.a;
-		var cmd = _v0.b;
-		return _Utils_Tuple2(
-			_Utils_update(
-				model,
-				{
-					page: $author$project$Main$GalleryPage(gallery)
-				}),
-			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotGalleryMsg, cmd));
-	});
 var $elm$url$Url$addPort = F2(
 	function (maybePort, starter) {
 		if (maybePort.$ === 'Nothing') {
@@ -7725,13 +7732,7 @@ var $author$project$Main$update = F2(
 				}
 			case 'ChangedUrl':
 				var url = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							page: A2($author$project$Main$urlToPage, model.version, url)
-						}),
-					$elm$core$Platform$Cmd$none);
+				return A2($author$project$Main$updateUrl, url, model);
 			case 'GotFoldersMsg':
 				var foldersMsg = msg.a;
 				var _v2 = model.page;

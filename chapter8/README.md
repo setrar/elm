@@ -59,13 +59,18 @@ $ elm make src/Main.elm src/PhotoFolders.elm src/PhotoGroove.elm --output app.js
 <html>
     <head>
         <link rel="stylesheet" href="http://elm-in-action.com/styles.css">
+        <link rel="stylesheet" href="http://elm-in-action.com/range-slider.css">
+        <script src="http://elm-in-action.com/range-slider.js"></script>
     </head>
     <body>
-        <div id="app"></div>
+        <div id="/app"></div>
         <script src="app.js"></script>
         <script src="http://elm-in-action.com/pasta.js"></script>
         <script>
-            Elm.Main.init( { node: document.getElementById("app")} );
+            Elm.Main.init({
+                flags: Pasta.version,
+                node: document.getElementById("app")
+            });
         </script>
     </body>
 </html>
