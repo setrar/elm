@@ -1,4 +1,4 @@
-port module PhotoGroove exposing (main, photoDecoder)
+port module PhotoGallery exposing (init, Model, Msg, update, view, subscriptions)
 
 import Browser
 import Html exposing (Attribute, Html, button, div, h1, h3, img, input, label, node, text, canvas)
@@ -250,13 +250,16 @@ initialCmd =
         , expect = Http.expectJson GotPhotos (list photoDecoder)
         }
 
+subscriptions : Model -> Sub Msg
+subscriptions = \_ -> activityChanges GotActivity
+
 main : Program Float Model Msg
 main = 
     Browser.element
         { init = init
         , view = view
         , update = update
-        , subscriptions = \_ -> activityChanges GotActivity
+        , subscriptions = subscriptions
         }
 
 init : Float -> ( Model, Cmd Msg )

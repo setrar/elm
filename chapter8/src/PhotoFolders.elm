@@ -1,4 +1,4 @@
-module PhotoFolder exposing (main)
+module PhotoFolders exposing (Model, Msg, init, update, view)
 
 import Http
 import Json.Decode as Decode exposing (Decoder, int, string, list)
@@ -30,9 +30,9 @@ initialModel =
     , root = Folder { name = "Loading...", expanded = True, photoUrls = [], subfolders = [] }
     }
 
-init : () -> ( Model, Cmd Msg)
-init _ =
-    ( initialModel
+init : Maybe String -> ( Model, Cmd Msg)
+init selectedFileName =
+    ( { initialModel | selectedPhotoUrl = selectedFileName }
     , Http.get
         { url = "http://elm-in-action.com/folders/list"
         , expect = Http.expectJson GotInitialModel modelDecoder
@@ -152,6 +152,7 @@ view model =
             , div [ class "selected-photo" ] [ selectedPhoto ]
             ]
 
+{-
 main : Program () Model Msg
 main =
     Browser.element
@@ -160,6 +161,10 @@ main =
         , update = update
         , subscriptions = \_ -> Sub.none
         }
+-}
+
+main =
+  Html.text "Hello!"
 
 type alias Photo =
     { title : String

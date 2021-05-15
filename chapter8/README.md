@@ -50,7 +50,7 @@ $ echo Y | elm install NoRedInk/elm-json-decode-pipeline
 - [ ] Compile the application
 
 ```
-$ elm make src/Main.elm src/PhotoFolder.elm src/PhotoGroove.elm --output app.js
+$ elm make src/Main.elm src/PhotoFolders.elm src/PhotoGroove.elm --output app.js
 ```
 
 - [ ] Display the application
@@ -63,6 +63,7 @@ $ elm make src/Main.elm src/PhotoFolder.elm src/PhotoGroove.elm --output app.js
     <body>
         <div id="app"></div>
         <script src="app.js"></script>
+        <script src="http://elm-in-action.com/pasta.js"></script>
         <script>
             Elm.Main.init( { node: document.getElementById("app")} );
         </script>
