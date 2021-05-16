@@ -4,6 +4,8 @@
 
 ## [elm-spa-example](elm-spa-example)
 
+## [elm-spa-realworld](elm-spa-realworld)
+
 - [ ] Installing the CLI with node:
 
 ```
