@@ -50,7 +50,7 @@ $ echo Y | elm install NoRedInk/elm-json-decode-pipeline
 - [ ] Compile the application
 
 ```
-$ elm make src/Main.elm src/PhotoFolders.elm src/PhotoGroove.elm --output app.js
+$ elm make src/Main.elm --output app.js
 ```
 
 - [ ] Display the application
