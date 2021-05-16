@@ -4,8 +4,8 @@ import Http
 import Json.Decode as Decode exposing (Decoder, int, string, list)
 import Json.Decode.Pipeline exposing (required)
 import Browser
-import Html exposing (Html, div, h1, h2, h3, img, label, span, text)
-import Html.Attributes exposing (class, src)
+import Html exposing (Html, a, div, h1, h2, h3, img, label, span, text)
+import Html.Attributes exposing (class, href, src)
 import Html.Events exposing (onClick)
 import Dict exposing (Dict)
 
@@ -123,7 +123,7 @@ update msg model =
             ( { model | selectedPhotoUrl = Just url }, Cmd.none )
 
         GotInitialModel ( Ok newModel ) ->
-            ( newModel, Cmd.none )
+            ( { newModel | selectedPhotoUrl =  model.selectedPhotoUrl }, Cmd.none )
 
         GotInitialModel ( Err _ ) ->
             ( model, Cmd.none )
@@ -146,9 +146,7 @@ view model =
     in
         div [ class "content" ]
             [ div [ class "folders"]
-                [ h1 [] [ text "Folders" ]
-                , viewFolder End model.root
-                ]
+                [ viewFolder End model.root ]
             , div [ class "selected-photo" ] [ selectedPhoto ]
             ]
 
@@ -176,7 +174,7 @@ type alias Photo =
 
 viewPhoto : String -> Html Msg
 viewPhoto url =
-    div [ class "photo", onClick (ClickedPhoto url)] [ text url ]
+    a [ href ("/photos/" ++ url), class "photo", onClick (ClickedPhoto url)] [ text url ]
 
 viewSelectedPhoto : Photo -> Html Msg
 viewSelectedPhoto photo =
