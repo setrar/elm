@@ -250,13 +250,16 @@ initialCmd =
         , expect = Http.expectJson GotPhotos (list photoDecoder)
         }
 
+subscriptions : Model -> Sub Msg
+subscriptions = \_ -> activityChanges GotActivity
+
 main : Program Float Model Msg
 main = 
     Browser.element
         { init = init
         , view = view
         , update = update
-        , subscriptions = \_ -> activityChanges GotActivity
+        , subscriptions = subscriptions
         }
 
 init : Float -> ( Model, Cmd Msg )
