@@ -4532,6 +4532,23 @@ function _Http_track(router, xhr, tracker)
 	});
 }
 
+function _Url_percentEncode(string)
+{
+	return encodeURIComponent(string);
+}
+
+function _Url_percentDecode(string)
+{
+	try
+	{
+		return $elm$core$Maybe$Just(decodeURIComponent(string));
+	}
+	catch (e)
+	{
+		return $elm$core$Maybe$Nothing;
+	}
+}
+
 
 var _Bitwise_and = F2(function(a, b)
 {
@@ -4613,24 +4630,13 @@ function _Time_getZoneName()
 		callback(_Scheduler_succeed(name));
 	});
 }
-
-
-function _Url_percentEncode(string)
-{
-	return encodeURIComponent(string);
-}
-
-function _Url_percentDecode(string)
-{
-	try
-	{
-		return $elm$core$Maybe$Just(decodeURIComponent(string));
-	}
-	catch (e)
-	{
-		return $elm$core$Maybe$Nothing;
-	}
-}var $elm$core$Basics$EQ = {$: 'EQ'};
+var $author$project$Main$ChangedUrl = function (a) {
+	return {$: 'ChangedUrl', a: a};
+};
+var $author$project$Main$ClickedLink = function (a) {
+	return {$: 'ClickedLink', a: a};
+};
+var $elm$core$Basics$EQ = {$: 'EQ'};
 var $elm$core$Basics$GT = {$: 'GT'};
 var $elm$core$Basics$LT = {$: 'LT'};
 var $elm$core$List$cons = _List_cons;
@@ -5418,11 +5424,11 @@ var $elm$core$Task$perform = F2(
 			$elm$core$Task$Perform(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
-var $elm$browser$Browser$element = _Browser_element;
+var $elm$browser$Browser$application = _Browser_application;
 var $elm$json$Json$Decode$float = _Json_decodeFloat;
-var $elm$core$String$fromFloat = _String_fromNumber;
-var $author$project$PhotoGallery$GotPhotos = function (a) {
-	return {$: 'GotPhotos', a: a};
+var $author$project$Main$NotFound = {$: 'NotFound'};
+var $author$project$PhotoFolders$GotInitialModel = function (a) {
+	return {$: 'GotInitialModel', a: a};
 };
 var $elm$json$Json$Decode$decodeString = _Json_runOnString;
 var $elm$http$Http$BadStatus_ = F2(
@@ -6211,15 +6217,197 @@ var $elm$http$Http$get = function (r) {
 	return $elm$http$Http$request(
 		{body: $elm$http$Http$emptyBody, expect: r.expect, headers: _List_Nil, method: 'GET', timeout: $elm$core$Maybe$Nothing, tracker: $elm$core$Maybe$Nothing, url: r.url});
 };
+var $author$project$PhotoFolders$Folder = function (a) {
+	return {$: 'Folder', a: a};
+};
+var $author$project$PhotoFolders$initialModel = {
+	photos: $elm$core$Dict$empty,
+	root: $author$project$PhotoFolders$Folder(
+		{expanded: true, name: 'Loading...', photoUrls: _List_Nil, subfolders: _List_Nil}),
+	selectedPhotoUrl: $elm$core$Maybe$Nothing
+};
+var $author$project$PhotoFolders$folderFromJson = F3(
+	function (name, photos, subfolders) {
+		return $author$project$PhotoFolders$Folder(
+			{
+				expanded: true,
+				name: name,
+				photoUrls: $elm$core$Dict$keys(photos),
+				subfolders: subfolders
+			});
+	});
+var $elm$json$Json$Decode$andThen = _Json_andThen;
+var $elm$json$Json$Decode$lazy = function (thunk) {
+	return A2(
+		$elm$json$Json$Decode$andThen,
+		thunk,
+		$elm$json$Json$Decode$succeed(_Utils_Tuple0));
+};
 var $elm$json$Json$Decode$list = _Json_decodeList;
-var $author$project$PhotoGallery$Photo = F3(
-	function (url, size, title) {
-		return {size: size, title: title, url: url};
+var $author$project$PhotoFolders$finishPhoto = function (_v0) {
+	var url = _v0.a;
+	var json = _v0.b;
+	return _Utils_Tuple2(
+		url,
+		{relatedUrls: json.relatedUrls, size: json.size, title: json.title, url: url});
+};
+var $elm$core$Dict$fromList = function (assocs) {
+	return A3(
+		$elm$core$List$foldl,
+		F2(
+			function (_v0, dict) {
+				var key = _v0.a;
+				var value = _v0.b;
+				return A3($elm$core$Dict$insert, key, value, dict);
+			}),
+		$elm$core$Dict$empty,
+		assocs);
+};
+var $author$project$PhotoFolders$fromPairs = function (pairs) {
+	return $elm$core$Dict$fromList(
+		A2($elm$core$List$map, $author$project$PhotoFolders$finishPhoto, pairs));
+};
+var $author$project$PhotoFolders$JsonPhoto = F3(
+	function (title, size, relatedUrls) {
+		return {relatedUrls: relatedUrls, size: size, title: title};
 	});
 var $elm$json$Json$Decode$int = _Json_decodeInt;
 var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom = $elm$json$Json$Decode$map2($elm$core$Basics$apR);
 var $elm$json$Json$Decode$field = _Json_decodeField;
-var $elm$json$Json$Decode$andThen = _Json_andThen;
+var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required = F3(
+	function (key, valDecoder, decoder) {
+		return A2(
+			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom,
+			A2($elm$json$Json$Decode$field, key, valDecoder),
+			decoder);
+	});
+var $elm$json$Json$Decode$string = _Json_decodeString;
+var $author$project$PhotoFolders$jsonPhotoDecoder = A3(
+	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+	'related_photos',
+	$elm$json$Json$Decode$list($elm$json$Json$Decode$string),
+	A3(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'size',
+		$elm$json$Json$Decode$int,
+		A3(
+			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+			'title',
+			$elm$json$Json$Decode$string,
+			$elm$json$Json$Decode$succeed($author$project$PhotoFolders$JsonPhoto))));
+var $elm$json$Json$Decode$keyValuePairs = _Json_decodeKeyValuePairs;
+var $author$project$PhotoFolders$photosDecoder = A2(
+	$elm$json$Json$Decode$map,
+	$author$project$PhotoFolders$fromPairs,
+	$elm$json$Json$Decode$keyValuePairs($author$project$PhotoFolders$jsonPhotoDecoder));
+function $author$project$PhotoFolders$cyclic$folderDecoder() {
+	return A3(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'subfolders',
+		$elm$json$Json$Decode$lazy(
+			function (_v0) {
+				return $elm$json$Json$Decode$list(
+					$author$project$PhotoFolders$cyclic$folderDecoder());
+			}),
+		A3(
+			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+			'photos',
+			$author$project$PhotoFolders$photosDecoder,
+			A3(
+				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+				'name',
+				$elm$json$Json$Decode$string,
+				$elm$json$Json$Decode$succeed($author$project$PhotoFolders$folderFromJson))));
+}
+try {
+	var $author$project$PhotoFolders$folderDecoder = $author$project$PhotoFolders$cyclic$folderDecoder();
+	$author$project$PhotoFolders$cyclic$folderDecoder = function () {
+		return $author$project$PhotoFolders$folderDecoder;
+	};
+} catch ($) {
+	throw 'Some top-level definitions from `PhotoFolders` are causing infinite recursion:\n\n  ┌─────┐\n  │    folderDecoder\n  └─────┘\n\nThese errors are very tricky, so read https://elm-lang.org/0.19.1/bad-recursion to learn how to fix it!';}
+var $elm$core$Dict$foldl = F3(
+	function (func, acc, dict) {
+		foldl:
+		while (true) {
+			if (dict.$ === 'RBEmpty_elm_builtin') {
+				return acc;
+			} else {
+				var key = dict.b;
+				var value = dict.c;
+				var left = dict.d;
+				var right = dict.e;
+				var $temp$func = func,
+					$temp$acc = A3(
+					func,
+					key,
+					value,
+					A3($elm$core$Dict$foldl, func, acc, left)),
+					$temp$dict = right;
+				func = $temp$func;
+				acc = $temp$acc;
+				dict = $temp$dict;
+				continue foldl;
+			}
+		}
+	});
+var $elm$core$Dict$union = F2(
+	function (t1, t2) {
+		return A3($elm$core$Dict$foldl, $elm$core$Dict$insert, t2, t1);
+	});
+var $author$project$PhotoFolders$modelPhotosFromJson = F2(
+	function (folderPhotos, subfolderPhotos) {
+		return A3($elm$core$List$foldl, $elm$core$Dict$union, folderPhotos, subfolderPhotos);
+	});
+function $author$project$PhotoFolders$cyclic$modelPhotosDecoder() {
+	return A3(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'subfolders',
+		$elm$json$Json$Decode$lazy(
+			function (_v0) {
+				return $elm$json$Json$Decode$list(
+					$author$project$PhotoFolders$cyclic$modelPhotosDecoder());
+			}),
+		A3(
+			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+			'photos',
+			$author$project$PhotoFolders$photosDecoder,
+			$elm$json$Json$Decode$succeed($author$project$PhotoFolders$modelPhotosFromJson)));
+}
+try {
+	var $author$project$PhotoFolders$modelPhotosDecoder = $author$project$PhotoFolders$cyclic$modelPhotosDecoder();
+	$author$project$PhotoFolders$cyclic$modelPhotosDecoder = function () {
+		return $author$project$PhotoFolders$modelPhotosDecoder;
+	};
+} catch ($) {
+	throw 'Some top-level definitions from `PhotoFolders` are causing infinite recursion:\n\n  ┌─────┐\n  │    modelPhotosDecoder\n  └─────┘\n\nThese errors are very tricky, so read https://elm-lang.org/0.19.1/bad-recursion to learn how to fix it!';}
+var $author$project$PhotoFolders$modelDecoder = A3(
+	$elm$json$Json$Decode$map2,
+	F2(
+		function (photos, root) {
+			return {photos: photos, root: root, selectedPhotoUrl: $elm$core$Maybe$Nothing};
+		}),
+	$author$project$PhotoFolders$modelPhotosDecoder,
+	$author$project$PhotoFolders$folderDecoder);
+var $author$project$PhotoFolders$init = function (selectedFileName) {
+	return _Utils_Tuple2(
+		_Utils_update(
+			$author$project$PhotoFolders$initialModel,
+			{selectedPhotoUrl: selectedFileName}),
+		$elm$http$Http$get(
+			{
+				expect: A2($elm$http$Http$expectJson, $author$project$PhotoFolders$GotInitialModel, $author$project$PhotoFolders$modelDecoder),
+				url: 'http://elm-in-action.com/folders/list'
+			}));
+};
+var $elm$core$String$fromFloat = _String_fromNumber;
+var $author$project$PhotoGallery$GotPhotos = function (a) {
+	return {$: 'GotPhotos', a: a};
+};
+var $author$project$PhotoGallery$Photo = F3(
+	function (url, size, title) {
+		return {size: size, title: title, url: url};
+	});
 var $elm$json$Json$Decode$decodeValue = _Json_run;
 var $elm$json$Json$Decode$fail = _Json_fail;
 var $elm$json$Json$Decode$null = _Json_decodeNull;
@@ -6268,14 +6456,6 @@ var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional = F4(
 				fallback),
 			decoder);
 	});
-var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required = F3(
-	function (key, valDecoder, decoder) {
-		return A2(
-			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom,
-			A2($elm$json$Json$Decode$field, key, valDecoder),
-			decoder);
-	});
-var $elm$json$Json$Decode$string = _Json_decodeString;
 var $author$project$PhotoGallery$photoDecoder = A4(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
 	'title',
@@ -6310,6 +6490,368 @@ var $author$project$PhotoGallery$init = function (flags) {
 			{activity: activity}),
 		$author$project$PhotoGallery$initialCmd);
 };
+var $elm$core$Platform$Cmd$batch = _Platform_batch;
+var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
+var $elm$url$Url$Parser$State = F5(
+	function (visited, unvisited, params, frag, value) {
+		return {frag: frag, params: params, unvisited: unvisited, value: value, visited: visited};
+	});
+var $elm$url$Url$Parser$getFirstMatch = function (states) {
+	getFirstMatch:
+	while (true) {
+		if (!states.b) {
+			return $elm$core$Maybe$Nothing;
+		} else {
+			var state = states.a;
+			var rest = states.b;
+			var _v1 = state.unvisited;
+			if (!_v1.b) {
+				return $elm$core$Maybe$Just(state.value);
+			} else {
+				if ((_v1.a === '') && (!_v1.b.b)) {
+					return $elm$core$Maybe$Just(state.value);
+				} else {
+					var $temp$states = rest;
+					states = $temp$states;
+					continue getFirstMatch;
+				}
+			}
+		}
+	}
+};
+var $elm$url$Url$Parser$removeFinalEmpty = function (segments) {
+	if (!segments.b) {
+		return _List_Nil;
+	} else {
+		if ((segments.a === '') && (!segments.b.b)) {
+			return _List_Nil;
+		} else {
+			var segment = segments.a;
+			var rest = segments.b;
+			return A2(
+				$elm$core$List$cons,
+				segment,
+				$elm$url$Url$Parser$removeFinalEmpty(rest));
+		}
+	}
+};
+var $elm$url$Url$Parser$preparePath = function (path) {
+	var _v0 = A2($elm$core$String$split, '/', path);
+	if (_v0.b && (_v0.a === '')) {
+		var segments = _v0.b;
+		return $elm$url$Url$Parser$removeFinalEmpty(segments);
+	} else {
+		var segments = _v0;
+		return $elm$url$Url$Parser$removeFinalEmpty(segments);
+	}
+};
+var $elm$url$Url$Parser$addToParametersHelp = F2(
+	function (value, maybeList) {
+		if (maybeList.$ === 'Nothing') {
+			return $elm$core$Maybe$Just(
+				_List_fromArray(
+					[value]));
+		} else {
+			var list = maybeList.a;
+			return $elm$core$Maybe$Just(
+				A2($elm$core$List$cons, value, list));
+		}
+	});
+var $elm$url$Url$percentDecode = _Url_percentDecode;
+var $elm$url$Url$Parser$addParam = F2(
+	function (segment, dict) {
+		var _v0 = A2($elm$core$String$split, '=', segment);
+		if ((_v0.b && _v0.b.b) && (!_v0.b.b.b)) {
+			var rawKey = _v0.a;
+			var _v1 = _v0.b;
+			var rawValue = _v1.a;
+			var _v2 = $elm$url$Url$percentDecode(rawKey);
+			if (_v2.$ === 'Nothing') {
+				return dict;
+			} else {
+				var key = _v2.a;
+				var _v3 = $elm$url$Url$percentDecode(rawValue);
+				if (_v3.$ === 'Nothing') {
+					return dict;
+				} else {
+					var value = _v3.a;
+					return A3(
+						$elm$core$Dict$update,
+						key,
+						$elm$url$Url$Parser$addToParametersHelp(value),
+						dict);
+				}
+			}
+		} else {
+			return dict;
+		}
+	});
+var $elm$url$Url$Parser$prepareQuery = function (maybeQuery) {
+	if (maybeQuery.$ === 'Nothing') {
+		return $elm$core$Dict$empty;
+	} else {
+		var qry = maybeQuery.a;
+		return A3(
+			$elm$core$List$foldr,
+			$elm$url$Url$Parser$addParam,
+			$elm$core$Dict$empty,
+			A2($elm$core$String$split, '&', qry));
+	}
+};
+var $elm$url$Url$Parser$parse = F2(
+	function (_v0, url) {
+		var parser = _v0.a;
+		return $elm$url$Url$Parser$getFirstMatch(
+			parser(
+				A5(
+					$elm$url$Url$Parser$State,
+					_List_Nil,
+					$elm$url$Url$Parser$preparePath(url.path),
+					$elm$url$Url$Parser$prepareQuery(url.query),
+					url.fragment,
+					$elm$core$Basics$identity)));
+	});
+var $author$project$Main$Folders = {$: 'Folders'};
+var $author$project$Main$Gallery = {$: 'Gallery'};
+var $author$project$Main$SelectedPhoto = function (a) {
+	return {$: 'SelectedPhoto', a: a};
+};
+var $elm$url$Url$Parser$Parser = function (a) {
+	return {$: 'Parser', a: a};
+};
+var $elm$url$Url$Parser$mapState = F2(
+	function (func, _v0) {
+		var visited = _v0.visited;
+		var unvisited = _v0.unvisited;
+		var params = _v0.params;
+		var frag = _v0.frag;
+		var value = _v0.value;
+		return A5(
+			$elm$url$Url$Parser$State,
+			visited,
+			unvisited,
+			params,
+			frag,
+			func(value));
+	});
+var $elm$url$Url$Parser$map = F2(
+	function (subValue, _v0) {
+		var parseArg = _v0.a;
+		return $elm$url$Url$Parser$Parser(
+			function (_v1) {
+				var visited = _v1.visited;
+				var unvisited = _v1.unvisited;
+				var params = _v1.params;
+				var frag = _v1.frag;
+				var value = _v1.value;
+				return A2(
+					$elm$core$List$map,
+					$elm$url$Url$Parser$mapState(value),
+					parseArg(
+						A5($elm$url$Url$Parser$State, visited, unvisited, params, frag, subValue)));
+			});
+	});
+var $elm$core$List$append = F2(
+	function (xs, ys) {
+		if (!ys.b) {
+			return xs;
+		} else {
+			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
+		}
+	});
+var $elm$core$List$concat = function (lists) {
+	return A3($elm$core$List$foldr, $elm$core$List$append, _List_Nil, lists);
+};
+var $elm$core$List$concatMap = F2(
+	function (f, list) {
+		return $elm$core$List$concat(
+			A2($elm$core$List$map, f, list));
+	});
+var $elm$url$Url$Parser$oneOf = function (parsers) {
+	return $elm$url$Url$Parser$Parser(
+		function (state) {
+			return A2(
+				$elm$core$List$concatMap,
+				function (_v0) {
+					var parser = _v0.a;
+					return parser(state);
+				},
+				parsers);
+		});
+};
+var $elm$url$Url$Parser$s = function (str) {
+	return $elm$url$Url$Parser$Parser(
+		function (_v0) {
+			var visited = _v0.visited;
+			var unvisited = _v0.unvisited;
+			var params = _v0.params;
+			var frag = _v0.frag;
+			var value = _v0.value;
+			if (!unvisited.b) {
+				return _List_Nil;
+			} else {
+				var next = unvisited.a;
+				var rest = unvisited.b;
+				return _Utils_eq(next, str) ? _List_fromArray(
+					[
+						A5(
+						$elm$url$Url$Parser$State,
+						A2($elm$core$List$cons, next, visited),
+						rest,
+						params,
+						frag,
+						value)
+					]) : _List_Nil;
+			}
+		});
+};
+var $elm$url$Url$Parser$slash = F2(
+	function (_v0, _v1) {
+		var parseBefore = _v0.a;
+		var parseAfter = _v1.a;
+		return $elm$url$Url$Parser$Parser(
+			function (state) {
+				return A2(
+					$elm$core$List$concatMap,
+					parseAfter,
+					parseBefore(state));
+			});
+	});
+var $elm$url$Url$Parser$custom = F2(
+	function (tipe, stringToSomething) {
+		return $elm$url$Url$Parser$Parser(
+			function (_v0) {
+				var visited = _v0.visited;
+				var unvisited = _v0.unvisited;
+				var params = _v0.params;
+				var frag = _v0.frag;
+				var value = _v0.value;
+				if (!unvisited.b) {
+					return _List_Nil;
+				} else {
+					var next = unvisited.a;
+					var rest = unvisited.b;
+					var _v2 = stringToSomething(next);
+					if (_v2.$ === 'Just') {
+						var nextValue = _v2.a;
+						return _List_fromArray(
+							[
+								A5(
+								$elm$url$Url$Parser$State,
+								A2($elm$core$List$cons, next, visited),
+								rest,
+								params,
+								frag,
+								value(nextValue))
+							]);
+					} else {
+						return _List_Nil;
+					}
+				}
+			});
+	});
+var $elm$url$Url$Parser$string = A2($elm$url$Url$Parser$custom, 'STRING', $elm$core$Maybe$Just);
+var $elm$url$Url$Parser$top = $elm$url$Url$Parser$Parser(
+	function (state) {
+		return _List_fromArray(
+			[state]);
+	});
+var $author$project$Main$parser = $elm$url$Url$Parser$oneOf(
+	_List_fromArray(
+		[
+			A2($elm$url$Url$Parser$map, $author$project$Main$Folders, $elm$url$Url$Parser$top),
+			A2(
+			$elm$url$Url$Parser$map,
+			$author$project$Main$Gallery,
+			$elm$url$Url$Parser$s('gallery')),
+			A2(
+			$elm$url$Url$Parser$map,
+			$author$project$Main$SelectedPhoto,
+			A2(
+				$elm$url$Url$Parser$slash,
+				$elm$url$Url$Parser$s('photos'),
+				$elm$url$Url$Parser$string))
+		]));
+var $author$project$Main$FoldersPage = function (a) {
+	return {$: 'FoldersPage', a: a};
+};
+var $author$project$Main$GotFoldersMsg = function (a) {
+	return {$: 'GotFoldersMsg', a: a};
+};
+var $elm$core$Platform$Cmd$map = _Platform_map;
+var $author$project$Main$toFolders = F2(
+	function (model, _v0) {
+		var folders = _v0.a;
+		var cmd = _v0.b;
+		return _Utils_Tuple2(
+			_Utils_update(
+				model,
+				{
+					page: $author$project$Main$FoldersPage(folders)
+				}),
+			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotFoldersMsg, cmd));
+	});
+var $author$project$Main$GalleryPage = function (a) {
+	return {$: 'GalleryPage', a: a};
+};
+var $author$project$Main$GotGalleryMsg = function (a) {
+	return {$: 'GotGalleryMsg', a: a};
+};
+var $author$project$Main$toGallery = F2(
+	function (model, _v0) {
+		var gallery = _v0.a;
+		var cmd = _v0.b;
+		return _Utils_Tuple2(
+			_Utils_update(
+				model,
+				{
+					page: $author$project$Main$GalleryPage(gallery)
+				}),
+			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotGalleryMsg, cmd));
+	});
+var $author$project$Main$updateUrl = F2(
+	function (url, model) {
+		var _v0 = A2($elm$url$Url$Parser$parse, $author$project$Main$parser, url);
+		if (_v0.$ === 'Just') {
+			switch (_v0.a.$) {
+				case 'Gallery':
+					var _v1 = _v0.a;
+					return A2(
+						$author$project$Main$toGallery,
+						model,
+						$author$project$PhotoGallery$init(model.version));
+				case 'Folders':
+					var _v2 = _v0.a;
+					return A2(
+						$author$project$Main$toFolders,
+						model,
+						$author$project$PhotoFolders$init($elm$core$Maybe$Nothing));
+				default:
+					var filename = _v0.a.a;
+					return A2(
+						$author$project$Main$toFolders,
+						model,
+						$author$project$PhotoFolders$init(
+							$elm$core$Maybe$Just(filename)));
+			}
+		} else {
+			return _Utils_Tuple2(
+				_Utils_update(
+					model,
+					{page: $author$project$Main$NotFound}),
+				$elm$core$Platform$Cmd$none);
+		}
+	});
+var $author$project$Main$init = F3(
+	function (version, url, key) {
+		return A2(
+			$author$project$Main$updateUrl,
+			url,
+			{key: key, page: $author$project$Main$NotFound, version: version});
+	});
+var $elm$core$Platform$Sub$map = _Platform_map;
+var $elm$core$Platform$Sub$batch = _Platform_batch;
+var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
 var $author$project$PhotoGallery$GotActivity = function (a) {
 	return {$: 'GotActivity', a: a};
 };
@@ -6317,6 +6859,117 @@ var $author$project$PhotoGallery$activityChanges = _Platform_incomingPort('activ
 var $author$project$PhotoGallery$subscriptions = function (_v0) {
 	return $author$project$PhotoGallery$activityChanges($author$project$PhotoGallery$GotActivity);
 };
+var $author$project$Main$subscriptions = function (model) {
+	var _v0 = model.page;
+	if (_v0.$ === 'GalleryPage') {
+		var gallery = _v0.a;
+		return A2(
+			$elm$core$Platform$Sub$map,
+			$author$project$Main$GotGalleryMsg,
+			$author$project$PhotoGallery$subscriptions(gallery));
+	} else {
+		return $elm$core$Platform$Sub$none;
+	}
+};
+var $elm$browser$Browser$Navigation$load = _Browser_load;
+var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
+var $elm$url$Url$addPort = F2(
+	function (maybePort, starter) {
+		if (maybePort.$ === 'Nothing') {
+			return starter;
+		} else {
+			var port_ = maybePort.a;
+			return starter + (':' + $elm$core$String$fromInt(port_));
+		}
+	});
+var $elm$url$Url$addPrefixed = F3(
+	function (prefix, maybeSegment, starter) {
+		if (maybeSegment.$ === 'Nothing') {
+			return starter;
+		} else {
+			var segment = maybeSegment.a;
+			return _Utils_ap(
+				starter,
+				_Utils_ap(prefix, segment));
+		}
+	});
+var $elm$url$Url$toString = function (url) {
+	var http = function () {
+		var _v0 = url.protocol;
+		if (_v0.$ === 'Http') {
+			return 'http://';
+		} else {
+			return 'https://';
+		}
+	}();
+	return A3(
+		$elm$url$Url$addPrefixed,
+		'#',
+		url.fragment,
+		A3(
+			$elm$url$Url$addPrefixed,
+			'?',
+			url.query,
+			_Utils_ap(
+				A2(
+					$elm$url$Url$addPort,
+					url.port_,
+					_Utils_ap(http, url.host)),
+				url.path)));
+};
+var $elm$core$Basics$not = _Basics_not;
+var $author$project$PhotoFolders$toggleExpanded = F2(
+	function (path, _v0) {
+		var folder = _v0.a;
+		if (path.$ === 'End') {
+			return $author$project$PhotoFolders$Folder(
+				_Utils_update(
+					folder,
+					{expanded: !folder.expanded}));
+		} else {
+			var targetIndex = path.a;
+			var remainingPath = path.b;
+			var transform = F2(
+				function (currentIndex, currentSubfolder) {
+					return _Utils_eq(currentIndex, targetIndex) ? A2($author$project$PhotoFolders$toggleExpanded, remainingPath, currentSubfolder) : currentSubfolder;
+				});
+			var subfolders = A2($elm$core$List$indexedMap, transform, folder.subfolders);
+			return $author$project$PhotoFolders$Folder(
+				_Utils_update(
+					folder,
+					{subfolders: subfolders}));
+		}
+	});
+var $author$project$PhotoFolders$update = F2(
+	function (msg, model) {
+		switch (msg.$) {
+			case 'ClickedFolder':
+				var path = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							root: A2($author$project$PhotoFolders$toggleExpanded, path, model.root)
+						}),
+					$elm$core$Platform$Cmd$none);
+			case 'ClickedPhoto':
+				var url = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							selectedPhotoUrl: $elm$core$Maybe$Just(url)
+						}),
+					$elm$core$Platform$Cmd$none);
+			default:
+				if (msg.a.$ === 'Ok') {
+					var newModel = msg.a.a;
+					return _Utils_Tuple2(newModel, $elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
+		}
+	});
 var $author$project$PhotoGallery$Errored = function (a) {
 	return {$: 'Errored', a: a};
 };
@@ -6327,8 +6980,6 @@ var $author$project$PhotoGallery$Loaded = F2(
 	function (a, b) {
 		return {$: 'Loaded', a: a, b: b};
 	});
-var $elm$core$Platform$Cmd$batch = _Platform_batch;
-var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $elm$json$Json$Encode$float = _Json_wrap;
 var $elm$json$Json$Encode$list = F2(
 	function (func, entries) {
@@ -6733,6 +7384,70 @@ var $author$project$PhotoGallery$update = F2(
 						{noise: noise}));
 		}
 	});
+var $author$project$Main$update = F2(
+	function (msg, model) {
+		switch (msg.$) {
+			case 'ClickedLink':
+				var urlRequest = msg.a;
+				if (urlRequest.$ === 'External') {
+					var href = urlRequest.a;
+					return _Utils_Tuple2(
+						model,
+						$elm$browser$Browser$Navigation$load(href));
+				} else {
+					var url = urlRequest.a;
+					return _Utils_Tuple2(
+						model,
+						A2(
+							$elm$browser$Browser$Navigation$pushUrl,
+							model.key,
+							$elm$url$Url$toString(url)));
+				}
+			case 'ChangedUrl':
+				var url = msg.a;
+				return A2($author$project$Main$updateUrl, url, model);
+			case 'GotFoldersMsg':
+				var foldersMsg = msg.a;
+				var _v2 = model.page;
+				if (_v2.$ === 'FoldersPage') {
+					var folders = _v2.a;
+					return A2(
+						$author$project$Main$toFolders,
+						model,
+						A2($author$project$PhotoFolders$update, foldersMsg, folders));
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
+			default:
+				var galleryMsg = msg.a;
+				var _v3 = model.page;
+				if (_v3.$ === 'GalleryPage') {
+					var gallery = _v3.a;
+					return A2(
+						$author$project$Main$toGallery,
+						model,
+						A2($author$project$PhotoGallery$update, galleryMsg, gallery));
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
+		}
+	});
+var $elm$virtual_dom$VirtualDom$lazy = _VirtualDom_lazy;
+var $elm$html$Html$Lazy$lazy = $elm$virtual_dom$VirtualDom$lazy;
+var $elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
+var $elm$html$Html$map = $elm$virtual_dom$VirtualDom$map;
+var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $author$project$PhotoFolders$End = {$: 'End'};
+var $elm$core$Maybe$andThen = F2(
+	function (callback, maybeValue) {
+		if (maybeValue.$ === 'Just') {
+			var value = maybeValue.a;
+			return callback(value);
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
 var $elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
 		return A2(
@@ -6742,25 +7457,28 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 	});
 var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
 var $elm$html$Html$div = _VirtualDom_node('div');
-var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
-var $author$project$PhotoGallery$ClickedSurpriseMe = {$: 'ClickedSurpriseMe'};
-var $author$project$PhotoGallery$Large = {$: 'Large'};
-var $author$project$PhotoGallery$SlidHue = function (a) {
-	return {$: 'SlidHue', a: a};
-};
-var $author$project$PhotoGallery$SlidNoise = function (a) {
-	return {$: 'SlidNoise', a: a};
-};
-var $author$project$PhotoGallery$SlidRipple = function (a) {
-	return {$: 'SlidRipple', a: a};
-};
-var $author$project$PhotoGallery$Small = {$: 'Small'};
-var $elm$html$Html$button = _VirtualDom_node('button');
-var $elm$html$Html$canvas = _VirtualDom_node('canvas');
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
-var $elm$html$Html$h3 = _VirtualDom_node('h3');
-var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
+var $author$project$PhotoFolders$ClickedFolder = function (a) {
+	return {$: 'ClickedFolder', a: a};
+};
+var $author$project$PhotoFolders$Subfolder = F2(
+	function (a, b) {
+		return {$: 'Subfolder', a: a, b: b};
+	});
+var $author$project$PhotoFolders$appendIndex = F2(
+	function (index, path) {
+		if (path.$ === 'End') {
+			return A2($author$project$PhotoFolders$Subfolder, index, $author$project$PhotoFolders$End);
+		} else {
+			var subfolderIndex = path.a;
+			var remainingPath = path.b;
+			return A2(
+				$author$project$PhotoFolders$Subfolder,
+				subfolderIndex,
+				A2($author$project$PhotoFolders$appendIndex, index, remainingPath));
+		}
+	});
+var $elm$html$Html$label = _VirtualDom_node('label');
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -6778,6 +7496,210 @@ var $elm$html$Html$Events$onClick = function (msg) {
 		'click',
 		$elm$json$Json$Decode$succeed(msg));
 };
+var $author$project$PhotoFolders$ClickedPhoto = function (a) {
+	return {$: 'ClickedPhoto', a: a};
+};
+var $author$project$PhotoFolders$viewPhoto = function (url) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('photo'),
+				$elm$html$Html$Events$onClick(
+				$author$project$PhotoFolders$ClickedPhoto(url))
+			]),
+		_List_fromArray(
+			[
+				$elm$html$Html$text(url)
+			]));
+};
+var $author$project$PhotoFolders$viewFolder = F2(
+	function (path, _v0) {
+		var folder = _v0.a;
+		var viewSubfolder = F2(
+			function (index, subfolder) {
+				return A2(
+					$author$project$PhotoFolders$viewFolder,
+					A2($author$project$PhotoFolders$appendIndex, index, path),
+					subfolder);
+			});
+		var folderLabel = A2(
+			$elm$html$Html$label,
+			_List_fromArray(
+				[
+					$elm$html$Html$Events$onClick(
+					$author$project$PhotoFolders$ClickedFolder(path))
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text(folder.name)
+				]));
+		if (folder.expanded) {
+			var contents = A2(
+				$elm$core$List$append,
+				A2($elm$core$List$indexedMap, viewSubfolder, folder.subfolders),
+				A2($elm$core$List$map, $author$project$PhotoFolders$viewPhoto, folder.photoUrls));
+			return A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('folder expanded')
+					]),
+				_List_fromArray(
+					[
+						folderLabel,
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('contents')
+							]),
+						contents)
+					]));
+		} else {
+			return A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('folder collapsed')
+					]),
+				_List_fromArray(
+					[folderLabel]));
+		}
+	});
+var $elm$html$Html$h2 = _VirtualDom_node('h2');
+var $elm$html$Html$h3 = _VirtualDom_node('h3');
+var $elm$html$Html$img = _VirtualDom_node('img');
+var $elm$html$Html$span = _VirtualDom_node('span');
+var $elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
+var $author$project$PhotoFolders$urlPrefix = 'http://elm-in-action.com/';
+var $author$project$PhotoFolders$viewRelatedPhoto = function (url) {
+	return A2(
+		$elm$html$Html$img,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('related-photo'),
+				$elm$html$Html$Events$onClick(
+				$author$project$PhotoFolders$ClickedPhoto(url)),
+				$elm$html$Html$Attributes$src($author$project$PhotoFolders$urlPrefix + ('photos/' + (url + '/thumb')))
+			]),
+		_List_Nil);
+};
+var $author$project$PhotoFolders$viewSelectedPhoto = function (photo) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('selected-photo')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$h2,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(photo.title)
+					])),
+				A2(
+				$elm$html$Html$img,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$src($author$project$PhotoFolders$urlPrefix + ('photos/' + (photo.url + '/full')))
+					]),
+				_List_Nil),
+				A2(
+				$elm$html$Html$span,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						$elm$core$String$fromInt(photo.size) + 'KB')
+					])),
+				A2(
+				$elm$html$Html$h3,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Related')
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('related-photos')
+					]),
+				A2($elm$core$List$map, $author$project$PhotoFolders$viewRelatedPhoto, photo.relatedUrls))
+			]));
+};
+var $author$project$PhotoFolders$view = function (model) {
+	var photoByUrl = function (url) {
+		return A2($elm$core$Dict$get, url, model.photos);
+	};
+	var selectedPhoto = function () {
+		var _v0 = A2($elm$core$Maybe$andThen, photoByUrl, model.selectedPhotoUrl);
+		if (_v0.$ === 'Just') {
+			var photo = _v0.a;
+			return $author$project$PhotoFolders$viewSelectedPhoto(photo);
+		} else {
+			return $elm$html$Html$text('');
+		}
+	}();
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('content')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('folders')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$h1,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Folders')
+							])),
+						A2($author$project$PhotoFolders$viewFolder, $author$project$PhotoFolders$End, model.root)
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('selected-photo')
+					]),
+				_List_fromArray(
+					[selectedPhoto]))
+			]));
+};
+var $author$project$PhotoGallery$ClickedSurpriseMe = {$: 'ClickedSurpriseMe'};
+var $author$project$PhotoGallery$Large = {$: 'Large'};
+var $author$project$PhotoGallery$SlidHue = function (a) {
+	return {$: 'SlidHue', a: a};
+};
+var $author$project$PhotoGallery$SlidNoise = function (a) {
+	return {$: 'SlidNoise', a: a};
+};
+var $author$project$PhotoGallery$SlidRipple = function (a) {
+	return {$: 'SlidRipple', a: a};
+};
+var $author$project$PhotoGallery$Small = {$: 'Small'};
+var $elm$html$Html$button = _VirtualDom_node('button');
+var $elm$html$Html$canvas = _VirtualDom_node('canvas');
+var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
 var $author$project$PhotoGallery$sizeToString = function (size) {
 	switch (size.$) {
 		case 'Small':
@@ -6789,7 +7711,6 @@ var $author$project$PhotoGallery$sizeToString = function (size) {
 	}
 };
 var $elm$json$Json$Encode$int = _Json_wrap;
-var $elm$html$Html$label = _VirtualDom_node('label');
 var $elm$html$Html$Attributes$max = $elm$html$Html$Attributes$stringProperty('max');
 var $elm$json$Json$Decode$at = F2(
 	function (fields, decoder) {
@@ -6917,13 +7838,6 @@ var $elm$html$Html$Attributes$classList = function (classes) {
 				$elm$core$List$map,
 				$elm$core$Tuple$first,
 				A2($elm$core$List$filter, $elm$core$Tuple$second, classes))));
-};
-var $elm$html$Html$img = _VirtualDom_node('img');
-var $elm$html$Html$Attributes$src = function (url) {
-	return A2(
-		$elm$html$Html$Attributes$stringProperty,
-		'src',
-		_VirtualDom_noJavaScriptOrHtmlUri(url));
 };
 var $elm$html$Html$Attributes$title = $elm$html$Html$Attributes$stringProperty('title');
 var $author$project$PhotoGallery$viewThumbnail = F2(
@@ -7055,924 +7969,6 @@ var $author$project$PhotoGallery$view = function (model) {
 						]);
 			}
 		}());
-};
-var $author$project$PhotoGallery$main = $elm$browser$Browser$element(
-	{init: $author$project$PhotoGallery$init, subscriptions: $author$project$PhotoGallery$subscriptions, update: $author$project$PhotoGallery$update, view: $author$project$PhotoGallery$view});
-var $author$project$PhotoFolders$main = $elm$html$Html$text('Hello!');
-var $author$project$Main$ChangedUrl = function (a) {
-	return {$: 'ChangedUrl', a: a};
-};
-var $author$project$Main$ClickedLink = function (a) {
-	return {$: 'ClickedLink', a: a};
-};
-var $elm$browser$Browser$application = _Browser_application;
-var $author$project$Main$NotFound = {$: 'NotFound'};
-var $author$project$PhotoFolders$GotInitialModel = function (a) {
-	return {$: 'GotInitialModel', a: a};
-};
-var $author$project$PhotoFolders$Folder = function (a) {
-	return {$: 'Folder', a: a};
-};
-var $author$project$PhotoFolders$initialModel = {
-	photos: $elm$core$Dict$empty,
-	root: $author$project$PhotoFolders$Folder(
-		{expanded: true, name: 'Loading...', photoUrls: _List_Nil, subfolders: _List_Nil}),
-	selectedPhotoUrl: $elm$core$Maybe$Nothing
-};
-var $author$project$PhotoFolders$folderFromJson = F3(
-	function (name, photos, subfolders) {
-		return $author$project$PhotoFolders$Folder(
-			{
-				expanded: true,
-				name: name,
-				photoUrls: $elm$core$Dict$keys(photos),
-				subfolders: subfolders
-			});
-	});
-var $elm$json$Json$Decode$lazy = function (thunk) {
-	return A2(
-		$elm$json$Json$Decode$andThen,
-		thunk,
-		$elm$json$Json$Decode$succeed(_Utils_Tuple0));
-};
-var $author$project$PhotoFolders$finishPhoto = function (_v0) {
-	var url = _v0.a;
-	var json = _v0.b;
-	return _Utils_Tuple2(
-		url,
-		{relatedUrls: json.relatedUrls, size: json.size, title: json.title, url: url});
-};
-var $elm$core$Dict$fromList = function (assocs) {
-	return A3(
-		$elm$core$List$foldl,
-		F2(
-			function (_v0, dict) {
-				var key = _v0.a;
-				var value = _v0.b;
-				return A3($elm$core$Dict$insert, key, value, dict);
-			}),
-		$elm$core$Dict$empty,
-		assocs);
-};
-var $author$project$PhotoFolders$fromPairs = function (pairs) {
-	return $elm$core$Dict$fromList(
-		A2($elm$core$List$map, $author$project$PhotoFolders$finishPhoto, pairs));
-};
-var $author$project$PhotoFolders$JsonPhoto = F3(
-	function (title, size, relatedUrls) {
-		return {relatedUrls: relatedUrls, size: size, title: title};
-	});
-var $author$project$PhotoFolders$jsonPhotoDecoder = A3(
-	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-	'related_photos',
-	$elm$json$Json$Decode$list($elm$json$Json$Decode$string),
-	A3(
-		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-		'size',
-		$elm$json$Json$Decode$int,
-		A3(
-			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-			'title',
-			$elm$json$Json$Decode$string,
-			$elm$json$Json$Decode$succeed($author$project$PhotoFolders$JsonPhoto))));
-var $elm$json$Json$Decode$keyValuePairs = _Json_decodeKeyValuePairs;
-var $author$project$PhotoFolders$photosDecoder = A2(
-	$elm$json$Json$Decode$map,
-	$author$project$PhotoFolders$fromPairs,
-	$elm$json$Json$Decode$keyValuePairs($author$project$PhotoFolders$jsonPhotoDecoder));
-function $author$project$PhotoFolders$cyclic$folderDecoder() {
-	return A3(
-		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-		'subfolders',
-		$elm$json$Json$Decode$lazy(
-			function (_v0) {
-				return $elm$json$Json$Decode$list(
-					$author$project$PhotoFolders$cyclic$folderDecoder());
-			}),
-		A3(
-			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-			'photos',
-			$author$project$PhotoFolders$photosDecoder,
-			A3(
-				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-				'name',
-				$elm$json$Json$Decode$string,
-				$elm$json$Json$Decode$succeed($author$project$PhotoFolders$folderFromJson))));
-}
-try {
-	var $author$project$PhotoFolders$folderDecoder = $author$project$PhotoFolders$cyclic$folderDecoder();
-	$author$project$PhotoFolders$cyclic$folderDecoder = function () {
-		return $author$project$PhotoFolders$folderDecoder;
-	};
-} catch ($) {
-	throw 'Some top-level definitions from `PhotoFolders` are causing infinite recursion:\n\n  ┌─────┐\n  │    folderDecoder\n  └─────┘\n\nThese errors are very tricky, so read https://elm-lang.org/0.19.1/bad-recursion to learn how to fix it!';}
-var $elm$core$Dict$foldl = F3(
-	function (func, acc, dict) {
-		foldl:
-		while (true) {
-			if (dict.$ === 'RBEmpty_elm_builtin') {
-				return acc;
-			} else {
-				var key = dict.b;
-				var value = dict.c;
-				var left = dict.d;
-				var right = dict.e;
-				var $temp$func = func,
-					$temp$acc = A3(
-					func,
-					key,
-					value,
-					A3($elm$core$Dict$foldl, func, acc, left)),
-					$temp$dict = right;
-				func = $temp$func;
-				acc = $temp$acc;
-				dict = $temp$dict;
-				continue foldl;
-			}
-		}
-	});
-var $elm$core$Dict$union = F2(
-	function (t1, t2) {
-		return A3($elm$core$Dict$foldl, $elm$core$Dict$insert, t2, t1);
-	});
-var $author$project$PhotoFolders$modelPhotosFromJson = F2(
-	function (folderPhotos, subfolderPhotos) {
-		return A3($elm$core$List$foldl, $elm$core$Dict$union, folderPhotos, subfolderPhotos);
-	});
-function $author$project$PhotoFolders$cyclic$modelPhotosDecoder() {
-	return A3(
-		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-		'subfolders',
-		$elm$json$Json$Decode$lazy(
-			function (_v0) {
-				return $elm$json$Json$Decode$list(
-					$author$project$PhotoFolders$cyclic$modelPhotosDecoder());
-			}),
-		A3(
-			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-			'photos',
-			$author$project$PhotoFolders$photosDecoder,
-			$elm$json$Json$Decode$succeed($author$project$PhotoFolders$modelPhotosFromJson)));
-}
-try {
-	var $author$project$PhotoFolders$modelPhotosDecoder = $author$project$PhotoFolders$cyclic$modelPhotosDecoder();
-	$author$project$PhotoFolders$cyclic$modelPhotosDecoder = function () {
-		return $author$project$PhotoFolders$modelPhotosDecoder;
-	};
-} catch ($) {
-	throw 'Some top-level definitions from `PhotoFolders` are causing infinite recursion:\n\n  ┌─────┐\n  │    modelPhotosDecoder\n  └─────┘\n\nThese errors are very tricky, so read https://elm-lang.org/0.19.1/bad-recursion to learn how to fix it!';}
-var $author$project$PhotoFolders$modelDecoder = A3(
-	$elm$json$Json$Decode$map2,
-	F2(
-		function (photos, root) {
-			return {photos: photos, root: root, selectedPhotoUrl: $elm$core$Maybe$Nothing};
-		}),
-	$author$project$PhotoFolders$modelPhotosDecoder,
-	$author$project$PhotoFolders$folderDecoder);
-var $author$project$PhotoFolders$init = function (selectedFileName) {
-	return _Utils_Tuple2(
-		_Utils_update(
-			$author$project$PhotoFolders$initialModel,
-			{selectedPhotoUrl: selectedFileName}),
-		$elm$http$Http$get(
-			{
-				expect: A2($elm$http$Http$expectJson, $author$project$PhotoFolders$GotInitialModel, $author$project$PhotoFolders$modelDecoder),
-				url: 'http://elm-in-action.com/folders/list'
-			}));
-};
-var $elm$url$Url$Parser$State = F5(
-	function (visited, unvisited, params, frag, value) {
-		return {frag: frag, params: params, unvisited: unvisited, value: value, visited: visited};
-	});
-var $elm$url$Url$Parser$getFirstMatch = function (states) {
-	getFirstMatch:
-	while (true) {
-		if (!states.b) {
-			return $elm$core$Maybe$Nothing;
-		} else {
-			var state = states.a;
-			var rest = states.b;
-			var _v1 = state.unvisited;
-			if (!_v1.b) {
-				return $elm$core$Maybe$Just(state.value);
-			} else {
-				if ((_v1.a === '') && (!_v1.b.b)) {
-					return $elm$core$Maybe$Just(state.value);
-				} else {
-					var $temp$states = rest;
-					states = $temp$states;
-					continue getFirstMatch;
-				}
-			}
-		}
-	}
-};
-var $elm$url$Url$Parser$removeFinalEmpty = function (segments) {
-	if (!segments.b) {
-		return _List_Nil;
-	} else {
-		if ((segments.a === '') && (!segments.b.b)) {
-			return _List_Nil;
-		} else {
-			var segment = segments.a;
-			var rest = segments.b;
-			return A2(
-				$elm$core$List$cons,
-				segment,
-				$elm$url$Url$Parser$removeFinalEmpty(rest));
-		}
-	}
-};
-var $elm$url$Url$Parser$preparePath = function (path) {
-	var _v0 = A2($elm$core$String$split, '/', path);
-	if (_v0.b && (_v0.a === '')) {
-		var segments = _v0.b;
-		return $elm$url$Url$Parser$removeFinalEmpty(segments);
-	} else {
-		var segments = _v0;
-		return $elm$url$Url$Parser$removeFinalEmpty(segments);
-	}
-};
-var $elm$url$Url$Parser$addToParametersHelp = F2(
-	function (value, maybeList) {
-		if (maybeList.$ === 'Nothing') {
-			return $elm$core$Maybe$Just(
-				_List_fromArray(
-					[value]));
-		} else {
-			var list = maybeList.a;
-			return $elm$core$Maybe$Just(
-				A2($elm$core$List$cons, value, list));
-		}
-	});
-var $elm$url$Url$percentDecode = _Url_percentDecode;
-var $elm$url$Url$Parser$addParam = F2(
-	function (segment, dict) {
-		var _v0 = A2($elm$core$String$split, '=', segment);
-		if ((_v0.b && _v0.b.b) && (!_v0.b.b.b)) {
-			var rawKey = _v0.a;
-			var _v1 = _v0.b;
-			var rawValue = _v1.a;
-			var _v2 = $elm$url$Url$percentDecode(rawKey);
-			if (_v2.$ === 'Nothing') {
-				return dict;
-			} else {
-				var key = _v2.a;
-				var _v3 = $elm$url$Url$percentDecode(rawValue);
-				if (_v3.$ === 'Nothing') {
-					return dict;
-				} else {
-					var value = _v3.a;
-					return A3(
-						$elm$core$Dict$update,
-						key,
-						$elm$url$Url$Parser$addToParametersHelp(value),
-						dict);
-				}
-			}
-		} else {
-			return dict;
-		}
-	});
-var $elm$url$Url$Parser$prepareQuery = function (maybeQuery) {
-	if (maybeQuery.$ === 'Nothing') {
-		return $elm$core$Dict$empty;
-	} else {
-		var qry = maybeQuery.a;
-		return A3(
-			$elm$core$List$foldr,
-			$elm$url$Url$Parser$addParam,
-			$elm$core$Dict$empty,
-			A2($elm$core$String$split, '&', qry));
-	}
-};
-var $elm$url$Url$Parser$parse = F2(
-	function (_v0, url) {
-		var parser = _v0.a;
-		return $elm$url$Url$Parser$getFirstMatch(
-			parser(
-				A5(
-					$elm$url$Url$Parser$State,
-					_List_Nil,
-					$elm$url$Url$Parser$preparePath(url.path),
-					$elm$url$Url$Parser$prepareQuery(url.query),
-					url.fragment,
-					$elm$core$Basics$identity)));
-	});
-var $author$project$Main$Folders = {$: 'Folders'};
-var $author$project$Main$Gallery = {$: 'Gallery'};
-var $author$project$Main$SelectedPhoto = function (a) {
-	return {$: 'SelectedPhoto', a: a};
-};
-var $elm$url$Url$Parser$Parser = function (a) {
-	return {$: 'Parser', a: a};
-};
-var $elm$url$Url$Parser$mapState = F2(
-	function (func, _v0) {
-		var visited = _v0.visited;
-		var unvisited = _v0.unvisited;
-		var params = _v0.params;
-		var frag = _v0.frag;
-		var value = _v0.value;
-		return A5(
-			$elm$url$Url$Parser$State,
-			visited,
-			unvisited,
-			params,
-			frag,
-			func(value));
-	});
-var $elm$url$Url$Parser$map = F2(
-	function (subValue, _v0) {
-		var parseArg = _v0.a;
-		return $elm$url$Url$Parser$Parser(
-			function (_v1) {
-				var visited = _v1.visited;
-				var unvisited = _v1.unvisited;
-				var params = _v1.params;
-				var frag = _v1.frag;
-				var value = _v1.value;
-				return A2(
-					$elm$core$List$map,
-					$elm$url$Url$Parser$mapState(value),
-					parseArg(
-						A5($elm$url$Url$Parser$State, visited, unvisited, params, frag, subValue)));
-			});
-	});
-var $elm$core$List$append = F2(
-	function (xs, ys) {
-		if (!ys.b) {
-			return xs;
-		} else {
-			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
-		}
-	});
-var $elm$core$List$concat = function (lists) {
-	return A3($elm$core$List$foldr, $elm$core$List$append, _List_Nil, lists);
-};
-var $elm$core$List$concatMap = F2(
-	function (f, list) {
-		return $elm$core$List$concat(
-			A2($elm$core$List$map, f, list));
-	});
-var $elm$url$Url$Parser$oneOf = function (parsers) {
-	return $elm$url$Url$Parser$Parser(
-		function (state) {
-			return A2(
-				$elm$core$List$concatMap,
-				function (_v0) {
-					var parser = _v0.a;
-					return parser(state);
-				},
-				parsers);
-		});
-};
-var $elm$url$Url$Parser$s = function (str) {
-	return $elm$url$Url$Parser$Parser(
-		function (_v0) {
-			var visited = _v0.visited;
-			var unvisited = _v0.unvisited;
-			var params = _v0.params;
-			var frag = _v0.frag;
-			var value = _v0.value;
-			if (!unvisited.b) {
-				return _List_Nil;
-			} else {
-				var next = unvisited.a;
-				var rest = unvisited.b;
-				return _Utils_eq(next, str) ? _List_fromArray(
-					[
-						A5(
-						$elm$url$Url$Parser$State,
-						A2($elm$core$List$cons, next, visited),
-						rest,
-						params,
-						frag,
-						value)
-					]) : _List_Nil;
-			}
-		});
-};
-var $elm$url$Url$Parser$slash = F2(
-	function (_v0, _v1) {
-		var parseBefore = _v0.a;
-		var parseAfter = _v1.a;
-		return $elm$url$Url$Parser$Parser(
-			function (state) {
-				return A2(
-					$elm$core$List$concatMap,
-					parseAfter,
-					parseBefore(state));
-			});
-	});
-var $elm$url$Url$Parser$custom = F2(
-	function (tipe, stringToSomething) {
-		return $elm$url$Url$Parser$Parser(
-			function (_v0) {
-				var visited = _v0.visited;
-				var unvisited = _v0.unvisited;
-				var params = _v0.params;
-				var frag = _v0.frag;
-				var value = _v0.value;
-				if (!unvisited.b) {
-					return _List_Nil;
-				} else {
-					var next = unvisited.a;
-					var rest = unvisited.b;
-					var _v2 = stringToSomething(next);
-					if (_v2.$ === 'Just') {
-						var nextValue = _v2.a;
-						return _List_fromArray(
-							[
-								A5(
-								$elm$url$Url$Parser$State,
-								A2($elm$core$List$cons, next, visited),
-								rest,
-								params,
-								frag,
-								value(nextValue))
-							]);
-					} else {
-						return _List_Nil;
-					}
-				}
-			});
-	});
-var $elm$url$Url$Parser$string = A2($elm$url$Url$Parser$custom, 'STRING', $elm$core$Maybe$Just);
-var $elm$url$Url$Parser$top = $elm$url$Url$Parser$Parser(
-	function (state) {
-		return _List_fromArray(
-			[state]);
-	});
-var $author$project$Main$parser = $elm$url$Url$Parser$oneOf(
-	_List_fromArray(
-		[
-			A2($elm$url$Url$Parser$map, $author$project$Main$Folders, $elm$url$Url$Parser$top),
-			A2(
-			$elm$url$Url$Parser$map,
-			$author$project$Main$Gallery,
-			$elm$url$Url$Parser$s('gallery')),
-			A2(
-			$elm$url$Url$Parser$map,
-			$author$project$Main$SelectedPhoto,
-			A2(
-				$elm$url$Url$Parser$slash,
-				$elm$url$Url$Parser$s('photos'),
-				$elm$url$Url$Parser$string))
-		]));
-var $author$project$Main$FoldersPage = function (a) {
-	return {$: 'FoldersPage', a: a};
-};
-var $author$project$Main$GotFoldersMsg = function (a) {
-	return {$: 'GotFoldersMsg', a: a};
-};
-var $elm$core$Platform$Cmd$map = _Platform_map;
-var $author$project$Main$toFolders = F2(
-	function (model, _v0) {
-		var folders = _v0.a;
-		var cmd = _v0.b;
-		return _Utils_Tuple2(
-			_Utils_update(
-				model,
-				{
-					page: $author$project$Main$FoldersPage(folders)
-				}),
-			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotFoldersMsg, cmd));
-	});
-var $author$project$Main$GalleryPage = function (a) {
-	return {$: 'GalleryPage', a: a};
-};
-var $author$project$Main$GotGalleryMsg = function (a) {
-	return {$: 'GotGalleryMsg', a: a};
-};
-var $author$project$Main$toGallery = F2(
-	function (model, _v0) {
-		var gallery = _v0.a;
-		var cmd = _v0.b;
-		return _Utils_Tuple2(
-			_Utils_update(
-				model,
-				{
-					page: $author$project$Main$GalleryPage(gallery)
-				}),
-			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotGalleryMsg, cmd));
-	});
-var $author$project$Main$updateUrl = F2(
-	function (url, model) {
-		var _v0 = A2($elm$url$Url$Parser$parse, $author$project$Main$parser, url);
-		if (_v0.$ === 'Just') {
-			switch (_v0.a.$) {
-				case 'Gallery':
-					var _v1 = _v0.a;
-					return A2(
-						$author$project$Main$toGallery,
-						model,
-						$author$project$PhotoGallery$init(model.version));
-				case 'Folders':
-					var _v2 = _v0.a;
-					return A2(
-						$author$project$Main$toFolders,
-						model,
-						$author$project$PhotoFolders$init($elm$core$Maybe$Nothing));
-				default:
-					var filename = _v0.a.a;
-					return A2(
-						$author$project$Main$toFolders,
-						model,
-						$author$project$PhotoFolders$init(
-							$elm$core$Maybe$Just(filename)));
-			}
-		} else {
-			return _Utils_Tuple2(
-				_Utils_update(
-					model,
-					{page: $author$project$Main$NotFound}),
-				$elm$core$Platform$Cmd$none);
-		}
-	});
-var $author$project$Main$init = F3(
-	function (version, url, key) {
-		return A2(
-			$author$project$Main$updateUrl,
-			url,
-			{key: key, page: $author$project$Main$NotFound, version: version});
-	});
-var $elm$core$Platform$Sub$map = _Platform_map;
-var $elm$core$Platform$Sub$batch = _Platform_batch;
-var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
-var $author$project$Main$subscriptions = function (model) {
-	var _v0 = model.page;
-	if (_v0.$ === 'GalleryPage') {
-		var gallery = _v0.a;
-		return A2(
-			$elm$core$Platform$Sub$map,
-			$author$project$Main$GotGalleryMsg,
-			$author$project$PhotoGallery$subscriptions(gallery));
-	} else {
-		return $elm$core$Platform$Sub$none;
-	}
-};
-var $elm$browser$Browser$Navigation$load = _Browser_load;
-var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
-var $elm$url$Url$addPort = F2(
-	function (maybePort, starter) {
-		if (maybePort.$ === 'Nothing') {
-			return starter;
-		} else {
-			var port_ = maybePort.a;
-			return starter + (':' + $elm$core$String$fromInt(port_));
-		}
-	});
-var $elm$url$Url$addPrefixed = F3(
-	function (prefix, maybeSegment, starter) {
-		if (maybeSegment.$ === 'Nothing') {
-			return starter;
-		} else {
-			var segment = maybeSegment.a;
-			return _Utils_ap(
-				starter,
-				_Utils_ap(prefix, segment));
-		}
-	});
-var $elm$url$Url$toString = function (url) {
-	var http = function () {
-		var _v0 = url.protocol;
-		if (_v0.$ === 'Http') {
-			return 'http://';
-		} else {
-			return 'https://';
-		}
-	}();
-	return A3(
-		$elm$url$Url$addPrefixed,
-		'#',
-		url.fragment,
-		A3(
-			$elm$url$Url$addPrefixed,
-			'?',
-			url.query,
-			_Utils_ap(
-				A2(
-					$elm$url$Url$addPort,
-					url.port_,
-					_Utils_ap(http, url.host)),
-				url.path)));
-};
-var $elm$core$Basics$not = _Basics_not;
-var $author$project$PhotoFolders$toggleExpanded = F2(
-	function (path, _v0) {
-		var folder = _v0.a;
-		if (path.$ === 'End') {
-			return $author$project$PhotoFolders$Folder(
-				_Utils_update(
-					folder,
-					{expanded: !folder.expanded}));
-		} else {
-			var targetIndex = path.a;
-			var remainingPath = path.b;
-			var transform = F2(
-				function (currentIndex, currentSubfolder) {
-					return _Utils_eq(currentIndex, targetIndex) ? A2($author$project$PhotoFolders$toggleExpanded, remainingPath, currentSubfolder) : currentSubfolder;
-				});
-			var subfolders = A2($elm$core$List$indexedMap, transform, folder.subfolders);
-			return $author$project$PhotoFolders$Folder(
-				_Utils_update(
-					folder,
-					{subfolders: subfolders}));
-		}
-	});
-var $author$project$PhotoFolders$update = F2(
-	function (msg, model) {
-		switch (msg.$) {
-			case 'ClickedFolder':
-				var path = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							root: A2($author$project$PhotoFolders$toggleExpanded, path, model.root)
-						}),
-					$elm$core$Platform$Cmd$none);
-			case 'ClickedPhoto':
-				var url = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							selectedPhotoUrl: $elm$core$Maybe$Just(url)
-						}),
-					$elm$core$Platform$Cmd$none);
-			default:
-				if (msg.a.$ === 'Ok') {
-					var newModel = msg.a.a;
-					return _Utils_Tuple2(newModel, $elm$core$Platform$Cmd$none);
-				} else {
-					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-				}
-		}
-	});
-var $author$project$Main$update = F2(
-	function (msg, model) {
-		switch (msg.$) {
-			case 'ClickedLink':
-				var urlRequest = msg.a;
-				if (urlRequest.$ === 'External') {
-					var href = urlRequest.a;
-					return _Utils_Tuple2(
-						model,
-						$elm$browser$Browser$Navigation$load(href));
-				} else {
-					var url = urlRequest.a;
-					return _Utils_Tuple2(
-						model,
-						A2(
-							$elm$browser$Browser$Navigation$pushUrl,
-							model.key,
-							$elm$url$Url$toString(url)));
-				}
-			case 'ChangedUrl':
-				var url = msg.a;
-				return A2($author$project$Main$updateUrl, url, model);
-			case 'GotFoldersMsg':
-				var foldersMsg = msg.a;
-				var _v2 = model.page;
-				if (_v2.$ === 'FoldersPage') {
-					var folders = _v2.a;
-					return A2(
-						$author$project$Main$toFolders,
-						model,
-						A2($author$project$PhotoFolders$update, foldersMsg, folders));
-				} else {
-					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-				}
-			default:
-				var galleryMsg = msg.a;
-				var _v3 = model.page;
-				if (_v3.$ === 'GalleryPage') {
-					var gallery = _v3.a;
-					return A2(
-						$author$project$Main$toGallery,
-						model,
-						A2($author$project$PhotoGallery$update, galleryMsg, gallery));
-				} else {
-					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-				}
-		}
-	});
-var $elm$virtual_dom$VirtualDom$lazy = _VirtualDom_lazy;
-var $elm$html$Html$Lazy$lazy = $elm$virtual_dom$VirtualDom$lazy;
-var $elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
-var $elm$html$Html$map = $elm$virtual_dom$VirtualDom$map;
-var $author$project$PhotoFolders$End = {$: 'End'};
-var $elm$core$Maybe$andThen = F2(
-	function (callback, maybeValue) {
-		if (maybeValue.$ === 'Just') {
-			var value = maybeValue.a;
-			return callback(value);
-		} else {
-			return $elm$core$Maybe$Nothing;
-		}
-	});
-var $author$project$PhotoFolders$ClickedFolder = function (a) {
-	return {$: 'ClickedFolder', a: a};
-};
-var $author$project$PhotoFolders$Subfolder = F2(
-	function (a, b) {
-		return {$: 'Subfolder', a: a, b: b};
-	});
-var $author$project$PhotoFolders$appendIndex = F2(
-	function (index, path) {
-		if (path.$ === 'End') {
-			return A2($author$project$PhotoFolders$Subfolder, index, $author$project$PhotoFolders$End);
-		} else {
-			var subfolderIndex = path.a;
-			var remainingPath = path.b;
-			return A2(
-				$author$project$PhotoFolders$Subfolder,
-				subfolderIndex,
-				A2($author$project$PhotoFolders$appendIndex, index, remainingPath));
-		}
-	});
-var $author$project$PhotoFolders$ClickedPhoto = function (a) {
-	return {$: 'ClickedPhoto', a: a};
-};
-var $author$project$PhotoFolders$viewPhoto = function (url) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('photo'),
-				$elm$html$Html$Events$onClick(
-				$author$project$PhotoFolders$ClickedPhoto(url))
-			]),
-		_List_fromArray(
-			[
-				$elm$html$Html$text(url)
-			]));
-};
-var $author$project$PhotoFolders$viewFolder = F2(
-	function (path, _v0) {
-		var folder = _v0.a;
-		var viewSubfolder = F2(
-			function (index, subfolder) {
-				return A2(
-					$author$project$PhotoFolders$viewFolder,
-					A2($author$project$PhotoFolders$appendIndex, index, path),
-					subfolder);
-			});
-		var folderLabel = A2(
-			$elm$html$Html$label,
-			_List_fromArray(
-				[
-					$elm$html$Html$Events$onClick(
-					$author$project$PhotoFolders$ClickedFolder(path))
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text(folder.name)
-				]));
-		if (folder.expanded) {
-			var contents = A2(
-				$elm$core$List$append,
-				A2($elm$core$List$indexedMap, viewSubfolder, folder.subfolders),
-				A2($elm$core$List$map, $author$project$PhotoFolders$viewPhoto, folder.photoUrls));
-			return A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('folder expanded')
-					]),
-				_List_fromArray(
-					[
-						folderLabel,
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('contents')
-							]),
-						contents)
-					]));
-		} else {
-			return A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('folder collapsed')
-					]),
-				_List_fromArray(
-					[folderLabel]));
-		}
-	});
-var $elm$html$Html$h2 = _VirtualDom_node('h2');
-var $elm$html$Html$span = _VirtualDom_node('span');
-var $author$project$PhotoFolders$urlPrefix = 'http://elm-in-action.com/';
-var $author$project$PhotoFolders$viewRelatedPhoto = function (url) {
-	return A2(
-		$elm$html$Html$img,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('related-photo'),
-				$elm$html$Html$Events$onClick(
-				$author$project$PhotoFolders$ClickedPhoto(url)),
-				$elm$html$Html$Attributes$src($author$project$PhotoFolders$urlPrefix + ('photos/' + (url + '/thumb')))
-			]),
-		_List_Nil);
-};
-var $author$project$PhotoFolders$viewSelectedPhoto = function (photo) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('selected-photo')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$h2,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text(photo.title)
-					])),
-				A2(
-				$elm$html$Html$img,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$src($author$project$PhotoFolders$urlPrefix + ('photos/' + (photo.url + '/full')))
-					]),
-				_List_Nil),
-				A2(
-				$elm$html$Html$span,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text(
-						$elm$core$String$fromInt(photo.size) + 'KB')
-					])),
-				A2(
-				$elm$html$Html$h3,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text('Related')
-					])),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('related-photos')
-					]),
-				A2($elm$core$List$map, $author$project$PhotoFolders$viewRelatedPhoto, photo.relatedUrls))
-			]));
-};
-var $author$project$PhotoFolders$view = function (model) {
-	var photoByUrl = function (url) {
-		return A2($elm$core$Dict$get, url, model.photos);
-	};
-	var selectedPhoto = function () {
-		var _v0 = A2($elm$core$Maybe$andThen, photoByUrl, model.selectedPhotoUrl);
-		if (_v0.$ === 'Just') {
-			var photo = _v0.a;
-			return $author$project$PhotoFolders$viewSelectedPhoto(photo);
-		} else {
-			return $elm$html$Html$text('');
-		}
-	}();
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('content')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('folders')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$h1,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Folders')
-							])),
-						A2($author$project$PhotoFolders$viewFolder, $author$project$PhotoFolders$End, model.root)
-					])),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('selected-photo')
-					]),
-				_List_fromArray(
-					[selectedPhoto]))
-			]));
 };
 var $elm$html$Html$footer = _VirtualDom_node('footer');
 var $author$project$Main$viewFooter = A2(
@@ -8108,4 +8104,4 @@ var $author$project$Main$view = function (model) {
 };
 var $author$project$Main$main = $elm$browser$Browser$application(
 	{init: $author$project$Main$init, onUrlChange: $author$project$Main$ChangedUrl, onUrlRequest: $author$project$Main$ClickedLink, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
-_Platform_export({'Main':{'init':$author$project$Main$main($elm$json$Json$Decode$float)(0)},'PhotoGallery':{'init':$author$project$PhotoGallery$main($elm$json$Json$Decode$float)(0)},'PhotoFolders':{'init':_VirtualDom_init($author$project$PhotoFolders$main)(0)(0)}});}(this));
+_Platform_export({'Main':{'init':$author$project$Main$main($elm$json$Json$Decode$float)(0)}});}(this));
