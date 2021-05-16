@@ -1,6 +1,6 @@
-# ELM in Action
+# ELM Studies
 
-https://github.com/rtfeldman/elm-in-action
+## [elm in action](elm-in-action)
 
 # References
 
