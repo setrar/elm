@@ -1,6 +1,5 @@
 .DS_Store
 .elm-spa
-.idea
 elm-stuff
 node_modules
 dist

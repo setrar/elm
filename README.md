@@ -9,7 +9,7 @@
 - [ ] Installing the CLI with node:
 
 ```
-$ npm install elm-spa@latest --global
+$ npm install elm-spa@6.0.15--beta --global
 ```
 
 - [ ] Create the directory where to put the project
