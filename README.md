@@ -21,8 +21,18 @@ $ mkdir elm-spa-realworld; cd elm-spa-realworld
 - [ ] Initialize the project 
 
 ```
-$ elm-spa init html elm-spa-realworld
+$ elm-spa new
 ```
+
+- [ ] Run the project 
+
+```
+$ elm-spa server
+```
+
+- [ ] Open URL
+
+http://localhost:1234
 
 # References
 
