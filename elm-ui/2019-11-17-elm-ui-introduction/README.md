@@ -8,3 +8,7 @@ $ elm init
 ```
 $ echo Y | elm install mdgriffith/elm-ui
 ```
+
+```
+$ echo Y | elm install elm/json
+```

@@ -1,11 +1,13 @@
 module Main exposing (..)
 
-import Element exposing (Element, alignBottom, alignRight, column, el, fill, fillPortion, height, layout, mouseOver, none, padding, paddingXY, paragraph, rgb255, row, scrollbarY, spacingXY, text, width)
+import Element exposing (Element, alignBottom, alignRight, column, el, fill, fillPortion, height, html, layout, mouseOver, none, padding, paddingXY, paragraph, rgb255, row, scrollbarY, spacingXY, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
-import Html exposing (Html)
+import Html exposing (Html, iframe)
+import Html.Attributes exposing (property, src)
+import Json.Encode
 
 type alias Message =
     { author: String, time : String, text : String }
@@ -106,6 +108,88 @@ chatPanel channel messages =
             column [ padding 10, spacingXY 0 20, scrollbarY ] <|
                 List.map messageEntry messages
 
+        {-
+            Converting an Embedded iFrame Html to an elm-ui Element
+                <iframe width="560" height="315"
+                    src="https://www.youtube.com/embed/Pr9TdbTDMH0"
+                    title="YouTube video player" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+                </iframe>
+        -}
+        videoframe : Element msg
+        videoframe =
+            html <|
+                  iframe
+                  [ Html.Attributes.width 560
+                  , Html.Attributes.height 315
+                  , src "https://www.youtube.com/embed/Pr9TdbTDMH0"
+                  , property "title" (Json.Encode.string "YouTube video player")
+                  , property "allow" (Json.Encode.string "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture")
+                  , property "frameborder" (Json.Encode.string "0")
+                  , property "allowfullscreen" (Json.Encode.string "true")
+                  ]
+                  []
+
+        helveticaFont =
+            el
+               [ Font.family
+                   [ Font.typeface "Helvetica"
+                   , Font.sansSerif
+                   ]
+               ]
+               (text "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
+
+        {-
+            https://fonts.google.com/?query=muli
+        -}
+        mulishFont =
+            el
+               [ Font.family
+                   [ Font.external
+                       { name = "Mulish"
+                       , url = "https://fonts.googleapis.com/css?family=Mulish"
+                       }
+                   , Font.sansSerif
+                   ]
+                   , Font.color <| rgb255 164 53 148
+               ]
+               (text "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
+
+        {-
+            https://fonts.google.com/?query=muli
+            https://fonts.googleapis.com/css2?family=Mulish:wght@300;400&display=swap
+        -}
+        mulishLightFont =
+            el
+               [ Font.family
+                   [ Font.external
+                       { name = "Mulish"
+                       --, url = "https://fonts.googleapis.com/css2?family=Mulish:wght@300;400&display=swap"
+                       , url = "https://fonts.googleapis.com/css?family=Mulish"
+                       }
+                   , Font.sansSerif
+                   ]
+                  , Font.extraLight
+                  , Font.color <| rgb255 129 202 48
+
+               ]
+               (text "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
+        mulishDarkFont =
+            el
+               [ Font.family
+                   [ Font.external
+                       { name = "Mulish"
+                       --, url = "https://fonts.googleapis.com/css2?family=Mulish:wght@300;400&display=swap"
+                       , url = "https://fonts.googleapis.com/css?family=Mulish"
+                       }
+                   , Font.sansSerif
+                   ]
+                  , Font.extraBold
+                  , Font.color <| rgb255 35 35 35
+
+               ]
+               (text "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
+
         footer =
             el [ alignBottom, padding 20, width fill ] <|
                 row
@@ -129,6 +213,11 @@ chatPanel channel messages =
     column [ height fill, width <| fillPortion 5]
         [ header
         , messagePanel
+        , videoframe
+        , helveticaFont
+        , mulishFont
+        , mulishLightFont
+        , mulishDarkFont
         , footer
         ]
 
