@@ -8,7 +8,7 @@
 
 # References
 
-- [ ][Learn You an Elm](https://learnyouanelm.github.io)
+- [Learn You an Elm](https://learnyouanelm.github.io)
 
 https://rhg.dev/posts/realworld-elm-spa
 
